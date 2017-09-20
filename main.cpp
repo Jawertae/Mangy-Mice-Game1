@@ -9,8 +9,8 @@ and may not be redistributed without written permission.*/
 #include <fstream>
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 1920;
+const int SCREEN_HEIGHT = 1080;
 
 //The dimensions of the level
 const int LEVEL_WIDTH = 1280;
@@ -133,6 +133,10 @@ class Dot
 		void render( SDL_Rect& camera );
 
     private:
+
+		bool jumpLock;
+		static const int jumpVel = 15;
+
 		//Collision box of the dot
 		SDL_Rect mBox;
 
@@ -362,6 +366,7 @@ Dot::Dot()
     //Initialize the velocity
     mVelX = 0;
     mVelY = 0;
+    jumpLock = 0;
 }
 
 void Dot::handleEvent( SDL_Event& e )
@@ -376,6 +381,7 @@ void Dot::handleEvent( SDL_Event& e )
             case SDLK_DOWN: mVelY += DOT_VEL; break;
             case SDLK_LEFT: mVelX -= DOT_VEL; break;
             case SDLK_RIGHT: mVelX += DOT_VEL; break;
+	    case SDLK_SPACE: if(!jumpLock) {mVelY -= jumpVel;jumpLock=1;} break;
         }
     }
     //If a key was released
@@ -388,6 +394,7 @@ void Dot::handleEvent( SDL_Event& e )
             case SDLK_DOWN: mVelY -= DOT_VEL; break;
             case SDLK_LEFT: mVelX += DOT_VEL; break;
             case SDLK_RIGHT: mVelX -= DOT_VEL; break;
+	    case SDLK_SPACE: if(jumpLock) {mVelY += jumpVel;} break;
         }
     }
 }
@@ -411,6 +418,7 @@ void Dot::move( Tile *tiles[] )
     if( ( mBox.y < 0 ) || ( mBox.y + DOT_HEIGHT > LEVEL_HEIGHT ) || touchesWall( mBox, tiles ) )
     {
         //move back
+	jumpLock = 0;
         mBox.y -= mVelY;
     }
 }
@@ -466,7 +474,7 @@ bool init()
 		}
 
 		//Create window
-		gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+		gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_FULLSCREEN );
 		if( gWindow == NULL )
 		{
 			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
