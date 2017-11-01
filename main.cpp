@@ -1,15 +1,15 @@
 //lol bitches
 
 //#include <SDL2/SDL.h>
-//#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
 #include <string>
 #include <fstream>
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 1920;
-const int SCREEN_HEIGHT = 1080;
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
 
 //The dimensions of the level
 const int LEVEL_WIDTH = 1280;
@@ -34,6 +34,8 @@ const int TILE_BOTTOM = 8;
 const int TILE_BOTTOMLEFT = 9;
 const int TILE_LEFT = 10;
 const int TILE_TOPLEFT = 11;
+
+TTF_Font *gFont = NULL;
 
 //Texture wrapper class
 class LTexture
@@ -123,6 +125,8 @@ class Dot
 		void handleEvent( SDL_Event& e );
 
 		//Moves the dot and check collision against tiles
+                void jump();
+                void gravity();
 		void move( Tile *tiles[] );
 
 		//Centers the camera over the dot
@@ -134,7 +138,7 @@ class Dot
     private:
 
 		bool jumpLock;
-		static const int jumpVel = 15;
+		static const int jumpVel = 10;
 
 		//Collision box of the dot
 		SDL_Rect mBox;
@@ -155,8 +159,9 @@ void close( Tile* tiles[] );
 //Box collision detector
 bool checkCollision( SDL_Rect a, SDL_Rect b );
 
-//Checks collision box against set of tiles
+//Checks collision box against set of tiles and floor
 bool touchesWall( SDL_Rect box, Tile* tiles[] );
+bool touchesFloor( SDL_Rect box, Tile* tiles[] );
 
 //Sets tiles from tile map
 bool setTiles( Tile *tiles[] );
@@ -206,7 +211,7 @@ bool LTexture::loadFromFile( std::string path )
 		SDL_SetColorKey( loadedSurface, SDL_TRUE, SDL_MapRGB( loadedSurface->format, 0, 0xFF, 0xFF ) );
 
 		//Create texture from surface pixels
-        newTexture = SDL_CreateTextureFromSurface( gRenderer, loadedSurface );
+                newTexture = SDL_CreateTextureFromSurface( gRenderer, loadedSurface );
 		if( newTexture == NULL )
 		{
 			printf( "Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
@@ -238,7 +243,7 @@ bool LTexture::loadFromRenderedText( std::string textureText, SDL_Color textColo
 	if( textSurface != NULL )
 	{
 		//Create texture from surface pixels
-        mTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
+                mTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
 		if( mTexture == NULL )
 		{
 			printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
@@ -365,6 +370,8 @@ Dot::Dot()
     //Initialize the velocity
     mVelX = 0;
     mVelY = 0;
+
+    //Initialize Jumping
     jumpLock = 0;
 }
 
@@ -376,11 +383,12 @@ void Dot::handleEvent( SDL_Event& e )
         //Adjust the velocity
         switch( e.key.keysym.sym )
         {
-            case SDLK_UP: mVelY -= DOT_VEL; break;
-            case SDLK_DOWN: mVelY += DOT_VEL; break;
+//            case SDLK_UP: mVelY -= DOT_VEL; break;
+//            case SDLK_DOWN: mVelY += DOT_VEL; break;
             case SDLK_LEFT: mVelX -= DOT_VEL; break;
             case SDLK_RIGHT: mVelX += DOT_VEL; break;
-	    case SDLK_SPACE: if(!jumpLock) {mVelY -= jumpVel;jumpLock=1;} break;
+	    case SDLK_SPACE: if(!jumpLock) { jump(); }; break;
+            case SDLK_o: jumpLock=0; jump(); break;
         }
     }
     //If a key was released
@@ -389,12 +397,44 @@ void Dot::handleEvent( SDL_Event& e )
         //Adjust the velocity
         switch( e.key.keysym.sym )
         {
-            case SDLK_UP: mVelY += DOT_VEL; break;
-            case SDLK_DOWN: mVelY -= DOT_VEL; break;
+//            case SDLK_UP: mVelY += DOT_VEL; break;
+//            case SDLK_DOWN: mVelY -= DOT_VEL; break;
             case SDLK_LEFT: mVelX += DOT_VEL; break;
             case SDLK_RIGHT: mVelX -= DOT_VEL; break;
-	    case SDLK_SPACE: if(jumpLock) {mVelY += jumpVel;} break;
+	    case SDLK_SPACE: mVelY = 0 ; break;
         }
+    }
+}
+
+void Dot::jump()
+{
+    //Jump
+    mVelY -= jumpVel;
+
+}
+
+void Dot::gravity()
+{
+    //is he in the air?
+    if( ( mBox.y + DOT_HEIGHT < LEVEL_HEIGHT ) )// && ( !touchesFloor( mBox, tiles) ) )
+    {
+        if (mVelY < 5) //check to see if he is terminal velocity yet
+        {
+            ++mVelY; //fall faster or ascend slower
+        }
+        else
+        {
+            //terminal velocity
+            mVelY = 5;
+        }
+    }
+    else if( mBox.y + DOT_HEIGHT > LEVEL_HEIGHT)
+    {
+        mVelY = 0;
+        mBox.y = LEVEL_HEIGHT - DOT_HEIGHT;
+    }
+    else {
+        mVelY = 0;
     }
 }
 
@@ -413,13 +453,25 @@ void Dot::move( Tile *tiles[] )
     //Move the dot up or down
     mBox.y += mVelY;
 
+    //factor in gravity
+    gravity();
+
     //If the dot went too far up or down or touched a wall
     if( ( mBox.y < 0 ) || ( mBox.y + DOT_HEIGHT > LEVEL_HEIGHT ) || touchesWall( mBox, tiles ) )
     {
         //move back
-	jumpLock = 0;
         mBox.y -= mVelY;
     }
+
+    //double duty for falling
+  //  if( ( mBox.y <= 0 ) )
+  //  {
+  //      //can jump again if touching or below the ground
+  //      jumpLock = 0;
+  //      //no vertical movement if theyre on the ground
+  //      mVelY = 0;
+  //  }
+
 }
 
 void Dot::setCamera( SDL_Rect& camera )
@@ -500,6 +552,11 @@ bool init()
 					printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
 					success = false;
 				}
+                                if( TTF_Init() == -1 )
+                                {
+                                    printf( "SDL_TTF could not Initialize! %s\n", TTF_GetError() );
+                                    success = false;
+                                }
 			}
 		}
 	}
@@ -533,6 +590,13 @@ bool loadMedia( Tile* tiles[] )
 		success = false;
 	}
 
+        //Load TTF
+        gFont = TTF_OpenFont( "assets/ph.ttf", 28 );
+        if( gFont == NULL)
+        {
+            printf( "Failed to load font!\n" );
+            success = false;
+        }
 	return success;
 }
 
@@ -548,6 +612,10 @@ void close( Tile* tiles[] )
 		 }
 	}
 
+        //Free Global Font
+        TTF_CloseFont( gFont );
+        gFont = NULL;
+
 	//Free loaded images
 	gDotTexture.free();
 	gTileTexture.free();
@@ -560,6 +628,7 @@ void close( Tile* tiles[] )
 
 	//Quit SDL subsystems
 	IMG_Quit();
+        TTF_Quit();
 	SDL_Quit();
 }
 
@@ -763,6 +832,11 @@ bool touchesWall( SDL_Rect box, Tile* tiles[] )
 
     //If no wall tiles were touched
     return false;
+}
+
+bool touchesFloor( SDL_Rect box, Tile* tiles[] )
+{
+    ;
 }
 
 int main( int argc, char* args[] )
