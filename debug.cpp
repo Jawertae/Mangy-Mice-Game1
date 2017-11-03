@@ -1,3 +1,7 @@
+#include "debug.h"
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
+
 Debug::Debug()
 {
 	textColor = {3,3,3};

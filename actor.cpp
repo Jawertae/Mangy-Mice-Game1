@@ -1,3 +1,5 @@
+#include "actor.h"
+
 Dot::Dot()
 {
     //Initialize the collision box
