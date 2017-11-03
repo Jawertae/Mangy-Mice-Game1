@@ -32,3 +32,38 @@ const int TILE_LEFT = 10;
 const int TILE_TOPLEFT = 11;
 
 TTF_Font *gFont = NULL;
+
+
+
+
+//Starts up SDL and creates window
+bool init();
+
+//Loads media
+bool loadMedia( Tile* tiles[] );
+
+//Frees media and shuts down SDL
+void close( Tile* tiles[] );
+
+//Box collision detector
+bool checkCollision( SDL_Rect a, SDL_Rect b );
+
+//Checks collision box against set of tiles and floor
+bool touchesWall( SDL_Rect box, Tile* tiles[] );
+bool touchesFloor( SDL_Rect box, Tile* tiles[] );
+
+//Sets tiles from tile map
+bool setTiles( Tile *tiles[] );
+
+int get_Scalar();
+
+//The window we'll be rendering to
+SDL_Window* gWindow = NULL;
+
+//The window renderer
+SDL_Renderer* gRenderer = NULL;
+
+//Scene textures
+LTexture gDotTexture;
+LTexture gTileTexture;
+SDL_Rect gTileClips[ TOTAL_TILE_SPRITES ];
