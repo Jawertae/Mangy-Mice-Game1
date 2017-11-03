@@ -1,4 +1,6 @@
 //The dot that will move around on the screen
+class Tile;
+
 class Dot
 {
     public:

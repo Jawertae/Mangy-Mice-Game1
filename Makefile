@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = main.cpp actor.cpp debug.cpp
+OBJS = main.cpp actor.cpp debug.cpp textures.cpp
 
 #CC specifies which compiler we're using
 CC = g++
@@ -22,3 +22,5 @@ all : $(OBJS)
 	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
 win : $(OBJS)
 	$(WCC) $(OBJS) $(WIN_FLAGS) $(LINKER_FLAGS) -o $(WIN_NAME)
+actor : $(OBJS)
+	$(CC) actor.cpp $(COMPILER_FLAGS) $(LINKER_FLAGS) -o actor.o

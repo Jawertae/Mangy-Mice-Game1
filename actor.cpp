@@ -1,12 +1,17 @@
+#include <SDL2/SDL.h>
+#include <string>
 #include "actor.h"
+#include "textures.h"
+#include "tiles.h"
+
 
 Dot::Dot()
 {
     //Initialize the collision box
     mBox.x = 0;
     mBox.y = 0;
-	mBox.w = DOT_WIDTH;
-	mBox.h = DOT_HEIGHT;
+	mBox.w = extern DOT_WIDTH;
+	mBox.h = extern DOT_HEIGHT;
 
     //Initialize the velocity
     mVelX = 0;
@@ -65,7 +70,7 @@ bool Dot::canJump()
 void Dot::gravity()
 {
     //is he in the air?
-    if( ( mBox.y + DOT_HEIGHT < LEVEL_HEIGHT ) )// && ( !touchesFloor( mBox, tiles) ) )
+    if( ( mBox.y + DOT_HEIGHT < extern LEVEL_HEIGHT ) )// && ( !touchesFloor( mBox, tiles) ) )
     {
         if ( mVelY < DOT_VEL + 2 ) //check to see if he is terminal velocity yet
         {
@@ -80,7 +85,7 @@ void Dot::gravity()
     else if( mBox.y + DOT_HEIGHT > LEVEL_HEIGHT)
     {
         mVelY = 0;
-        mBox.y = LEVEL_HEIGHT - DOT_HEIGHT;
+        mBox.y = extern LEVEL_HEIGHT - DOT_HEIGHT;
     }
     else {
         mVelY = 0;
@@ -93,7 +98,7 @@ void Dot::move( Tile *tiles[] )
     mBox.x += mVelX;
 
     //If the dot went too far to the left or right or touched a wall
-    if( ( mBox.x < 0 ) || ( mBox.x + DOT_WIDTH > LEVEL_WIDTH ) || touchesWall( mBox, tiles ) )
+    if( ( mBox.x < 0 ) || ( mBox.x + DOT_WIDTH > extern LEVEL_WIDTH ) || touchesWall( mBox, tiles ) )
     {
         //move back
         mBox.x -= mVelX;
@@ -106,29 +111,20 @@ void Dot::move( Tile *tiles[] )
     gravity();
 
     //If the dot went too far up or down or touched a wall
-    if( ( mBox.y < 0 ) || ( mBox.y + DOT_HEIGHT > LEVEL_HEIGHT ) || touchesWall( mBox, tiles ) )
+    if( ( mBox.y < 0 ) || ( mBox.y + DOT_HEIGHT > extern LEVEL_HEIGHT ) || touchesWall( mBox, tiles ) )
     {
         //move back
         mBox.y -= mVelY;
 	jumpLock = 0;
     }
 
-    //double duty for falling
-  //  if( ( mBox.y <= 0 ) )
-  //  {
-  //      //can jump again if touching or below the ground
-  //      jumpLock = 0;
-  //      //no vertical movement if theyre on the ground
-  //      mVelY = 0;
-  //  }
-
 }
 
 void Dot::setCamera( SDL_Rect& camera )
 {
 	//Center the camera over the dot
-	camera.x = ( mBox.x + DOT_WIDTH / 2 ) - SCREEN_WIDTH / 2;
-	camera.y = ( mBox.y + DOT_HEIGHT / 2 ) - SCREEN_HEIGHT / 2;
+	camera.x = ( mBox.x + DOT_WIDTH / 2 ) - extern SCREEN_WIDTH / 2;
+	camera.y = ( mBox.y + DOT_HEIGHT / 2 ) - extern SCREEN_HEIGHT / 2;
 
 	//Keep the camera in bounds
 	if( camera.x < 0 )
@@ -139,18 +135,18 @@ void Dot::setCamera( SDL_Rect& camera )
 	{
 		camera.y = 0;
 	}
-	if( camera.x > LEVEL_WIDTH - camera.w )
+	if( camera.x > extern LEVEL_WIDTH - camera.w )
 	{
-		camera.x = LEVEL_WIDTH - camera.w;
+		camera.x = extern LEVEL_WIDTH - camera.w;
 	}
-	if( camera.y > LEVEL_HEIGHT - camera.h )
+	if( camera.y > extern LEVEL_HEIGHT - camera.h )
 	{
-		camera.y = LEVEL_HEIGHT - camera.h;
+		camera.y = extern LEVEL_HEIGHT - camera.h;
 	}
 }
 
 void Dot::render( SDL_Rect& camera )
 {
     //Show the dot
-	gDotTexture.render( mBox.x - camera.x, mBox.y - camera.y );
+	extern gDotTexture.render( mBox.x - camera.x, mBox.y - camera.y );
 }

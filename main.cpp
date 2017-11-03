@@ -7,8 +7,11 @@
 #include <string>
 #include <fstream>
 #include <math.h>
+#include "textures.h"
+#include "tiles.h"
 #include "actor.h"
-#ibclude "debug.h"
+#include "debug.h"
+
 
 
 //Screen dimension constants

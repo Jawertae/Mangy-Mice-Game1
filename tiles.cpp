@@ -1,4 +1,6 @@
 #include "tiles.h"
+#include <SDL2/SDL_image.h>
+
 
 Tile::Tile( int x, int y, int tileType )
 {

@@ -5,9 +5,10 @@ class Debug
 		Debug();
 		Debug(int,int,int);
 		void update();
+		void update(bool);
 		void render();
 		void render(int,int);
-		
+
 	private:
 		LTexture debugText;
 		SDL_Color textColor;

@@ -1,4 +1,6 @@
 #include "debug.h"
+#include "textures.h"
+#include <stdio.h.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
@@ -13,9 +15,14 @@ Debug::Debug(int r, int g, int b)
 	jumpBool = "unset";
 }
 
-void Debug::update(Bool canJump)
+void Debug::update()
 {
-	
+
+}
+
+void Debug::update(bool canJump)
+{
+
 	if(canJump){jumpBool="jump";}
 	else {jumpBool="no";}
 
