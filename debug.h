@@ -12,4 +12,4 @@ class Debug
 		LTexture debugText;
 		SDL_Color textColor;
 		char * jumpBool;
-}
+};
