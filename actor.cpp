@@ -70,7 +70,7 @@ bool Dot::canJump()
 void Dot::gravity()
 {
     //is he in the air?
-    if( ( mBox.y + DOT_HEIGHT < extern LEVEL_HEIGHT ) )// && ( !touchesFloor( mBox, tiles) ) )
+    if( ( mBox.y + DOT_HEIGHT < LEVEL_HEIGHT ) )// && ( !touchesFloor( mBox, tiles) ) )
     {
         if ( mVelY < DOT_VEL + 2 ) //check to see if he is terminal velocity yet
         {

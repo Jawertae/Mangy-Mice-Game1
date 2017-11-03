@@ -2,10 +2,10 @@
 class Tile;
 
 
-extern int LEVEL_WIDTH;
-extern int LEVEL_HEIGHT;
-extern int SCREEN_WIDTH;
-extern int SCREEN_HEIGHT;
+extern const int LEVEL_WIDTH;
+extern const int LEVEL_HEIGHT;
+extern const int SCREEN_WIDTH;
+extern const int SCREEN_HEIGHT;
 
 
 
