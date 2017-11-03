@@ -6,10 +6,19 @@
 #include <stdio.h>
 #include <string>
 #include <fstream>
+#include <math.h>
+#include "actor.h"
+
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
+const int SCREEN_WIDTH = 480;
+const int SCREEN_HEIGHT = 272;
+//const int SCREEN_FPS = 60;
+//const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
+
+
+int SCREEN_WIDTH_TRUE = 480;
+int SCREEN_HEIGHT_TRUE = 272;
 
 //The dimensions of the level
 const int LEVEL_WIDTH = 1280;
@@ -116,7 +125,7 @@ class Dot
 		static const int DOT_HEIGHT = 20;
 
 		//Maximum axis velocity of the dot
-		static const int DOT_VEL = 10;
+		static const int DOT_VEL = 20;
 
 		//Initializes the variables
 		Dot();
@@ -128,6 +137,8 @@ class Dot
                 void jump();
                 void gravity();
 		void move( Tile *tiles[] );
+		bool canJump();
+
 
 		//Centers the camera over the dot
 		void setCamera( SDL_Rect& camera );
@@ -165,6 +176,8 @@ bool touchesFloor( SDL_Rect box, Tile* tiles[] );
 
 //Sets tiles from tile map
 bool setTiles( Tile *tiles[] );
+
+int get_Scalar();
 
 //The window we'll be rendering to
 SDL_Window* gWindow = NULL;
@@ -388,7 +401,10 @@ void Dot::handleEvent( SDL_Event& e )
             case SDLK_LEFT: mVelX -= DOT_VEL; break;
             case SDLK_RIGHT: mVelX += DOT_VEL; break;
 	    case SDLK_SPACE: if(!jumpLock) { jump(); }; break;
+
+		//debug stuff
             case SDLK_o: jumpLock=0; jump(); break;
+	    case SDLK_l: jumpLock=!jumpLock; break;
         }
     }
     //If a key was released
@@ -401,7 +417,7 @@ void Dot::handleEvent( SDL_Event& e )
 //            case SDLK_DOWN: mVelY -= DOT_VEL; break;
             case SDLK_LEFT: mVelX += DOT_VEL; break;
             case SDLK_RIGHT: mVelX -= DOT_VEL; break;
-	    case SDLK_SPACE: mVelY = 0 ; break;
+	    case SDLK_SPACE: if(!jumpLock){mVelY = 0;} jumpLock = 1 ; break;
         }
     }
 }
@@ -410,7 +426,12 @@ void Dot::jump()
 {
     //Jump
     mVelY -= jumpVel;
+    //jumpLock = 1;
+}
 
+bool Dot::canJump()
+{
+	return !jumpLock;
 }
 
 void Dot::gravity()
@@ -418,14 +439,14 @@ void Dot::gravity()
     //is he in the air?
     if( ( mBox.y + DOT_HEIGHT < LEVEL_HEIGHT ) )// && ( !touchesFloor( mBox, tiles) ) )
     {
-        if (mVelY < 5) //check to see if he is terminal velocity yet
+        if ( mVelY < DOT_VEL + 2 ) //check to see if he is terminal velocity yet
         {
             ++mVelY; //fall faster or ascend slower
         }
         else
         {
             //terminal velocity
-            mVelY = 5;
+            mVelY = DOT_VEL + 2;
         }
     }
     else if( mBox.y + DOT_HEIGHT > LEVEL_HEIGHT)
@@ -461,6 +482,7 @@ void Dot::move( Tile *tiles[] )
     {
         //move back
         mBox.y -= mVelY;
+	jumpLock = 0;
     }
 
     //double duty for falling
@@ -505,6 +527,49 @@ void Dot::render( SDL_Rect& camera )
 	gDotTexture.render( mBox.x - camera.x, mBox.y - camera.y );
 }
 
+int get_Scalar()
+{
+	SDL_DisplayMode* info;
+	float hor_scale = 1.0;
+	float vert_scale = 1.0;
+	int scalar = 1;
+	int hor = 0;
+	int vert = 0;
+
+	if( SDL_GetDesktopDisplayMode(0, info) != 0 )
+	{
+		printf("Get Current Display Failed: %s\n", SDL_GetError() );
+		return 1;
+	}
+/*	else
+	{
+		hor = info->w;
+		//vert = info->h;
+
+		printf( "Horizontal: %s\n", hor, "%s\n" );
+
+		return 0;
+	}
+	if(1==1) {return 0;}
+*/	else
+	{
+
+		SCREEN_WIDTH_TRUE = info->w;
+		SCREEN_HEIGHT_TRUE = info->h;
+
+		hor_scale = SCREEN_WIDTH_TRUE/SCREEN_WIDTH;
+		vert_scale = SCREEN_HEIGHT_TRUE/SCREEN_HEIGHT;
+
+		scalar = !(vert_scale<hor_scale)?hor_scale:vert_scale;
+	}
+
+	//debug
+	printf( "Screen Dimensions: %s",SCREEN_WIDTH_TRUE, "x", SCREEN_HEIGHT_TRUE );
+	printf( "Horizontal: %s\n", hor_scale, "Vertical: %s\n", vert_scale, "Final: %s\n", scalar );
+
+	return scalar;
+}
+
 bool init()
 {
 	//Initialization flag
@@ -525,7 +590,7 @@ bool init()
 		}
 
 		//Create window
-		gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_FULLSCREEN );
+		gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP );
 		if( gWindow == NULL )
 		{
 			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -534,7 +599,7 @@ bool init()
 		else
 		{
 			//Create renderer for window
-			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED);
+			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED || SDL_RENDERER_PRESENTVSYNC);
 			if( gRenderer == NULL )
 			{
 				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -545,6 +610,8 @@ bool init()
 				//Initialize renderer color
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 
+//				get_Scalar();
+
 				//Initialize PNG loading
 				int imgFlags = IMG_INIT_PNG;
 				if( !( IMG_Init( imgFlags ) & imgFlags ) )
@@ -552,6 +619,7 @@ bool init()
 					printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
 					success = false;
 				}
+				//Initialize Font
                                 if( TTF_Init() == -1 )
                                 {
                                     printf( "SDL_TTF could not Initialize! %s\n", TTF_GetError() );
@@ -870,9 +938,27 @@ int main( int argc, char* args[] )
 			//Level camera
 			SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
+			SDL_Color textColor = {3,3,3};
+			LTexture debugText;
+
+			//fps stuff
+			//LTimer fpsTimer;
+			//LTimer capTimer;
+
+			//int countedFrames = 0;
+			//fpsTimer.start();
+
+
+			//debug stuff
+			char * debbb = "lol";
+
+
+
 			//While application is running
 			while( !quit )
 			{
+				//capTimer.start();
+
 				//Handle events on queue
 				while( SDL_PollEvent( &e ) != 0 )
 				{
@@ -884,6 +970,18 @@ int main( int argc, char* args[] )
 
 					//Handle input for the dot
 					dot.handleEvent( e );
+				}
+
+				//more fps stuff
+				//float avgFPS = countedFrames / (fpsTimer.getTicks() /1000.f );
+				//if avgFPS > 2000000 ) { avgFPS = 0; }
+
+				if(dot.canJump()){debbb="jump";}
+				else {debbb="no";}
+
+				if( !debugText.loadFromRenderedText( debbb , textColor) )
+				{
+					printf("failed to load from rendered text");
 				}
 
 				//Move the dot
@@ -902,9 +1000,17 @@ int main( int argc, char* args[] )
 
 				//Render dot
 				dot.render( camera );
-
+				debugText.render(40,40);
 				//Update screen
 				SDL_RenderPresent( gRenderer );
+				//++countedFrames;
+
+				//int frameTicks = capTimer.getTicks();
+				//if( frameTicks < SCREEN_TICKS_PER_FRAME )
+				//{
+				//	SDL_Delay( SCREEN_TICKS_PER+FRAME - frameTicks );
+				//}
+
 			}
 		}
 
