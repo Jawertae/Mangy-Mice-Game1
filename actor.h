@@ -1,6 +1,14 @@
 //The dot that will move around on the screen
 class Tile;
 
+
+extern int LEVEL_WIDTH;
+extern int LEVEL_HEIGHT;
+extern int SCREEN_WIDTH;
+extern int SCREEN_HEIGHT;
+
+
+
 class Dot
 {
     public:
