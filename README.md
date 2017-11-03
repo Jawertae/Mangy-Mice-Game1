@@ -1,3 +1,3 @@
-Mangy-Mice-Game1
+Mangy-Mice-Game 1
 ================
-yadayadayada I'm Neat
+very rudimentary game engine experiment

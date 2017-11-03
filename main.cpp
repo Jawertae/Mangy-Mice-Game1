@@ -8,6 +8,7 @@
 #include <fstream>
 #include <math.h>
 #include "actor.h"
+#ibclude "debug.h"
 
 
 //Screen dimension constants
