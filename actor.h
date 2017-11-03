@@ -16,8 +16,8 @@ class Dot
 		void handleEvent( SDL_Event& e );
 
 		//Moves the dot and check collision against tiles
-                void jump();
-                void gravity();
+		void jump();
+		void gravity();
 		void move( Tile *tiles[] );
 		bool canJump();
 

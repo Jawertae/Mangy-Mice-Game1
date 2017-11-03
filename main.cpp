@@ -745,8 +745,8 @@ int main( int argc, char* args[] )
 			//Level camera
 			SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
-			SDL_Color textColor = {3,3,3};
-			LTexture debugText;
+			Debug debug;
+			
 
 			//fps stuff
 			//LTimer fpsTimer;
@@ -754,10 +754,6 @@ int main( int argc, char* args[] )
 
 			//int countedFrames = 0;
 			//fpsTimer.start();
-
-
-			//debug stuff
-			char * debbb = "lol";
 
 
 
@@ -783,17 +779,11 @@ int main( int argc, char* args[] )
 				//float avgFPS = countedFrames / (fpsTimer.getTicks() /1000.f );
 				//if avgFPS > 2000000 ) { avgFPS = 0; }
 
-				if(dot.canJump()){debbb="jump";}
-				else {debbb="no";}
-
-				if( !debugText.loadFromRenderedText( debbb , textColor) )
-				{
-					printf("failed to load from rendered text");
-				}
-
 				//Move the dot
 				dot.move( tileSet );
 				dot.setCamera( camera );
+				
+				debug.update(dot.canJump());
 
 				//Clear screen
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
@@ -807,7 +797,10 @@ int main( int argc, char* args[] )
 
 				//Render dot
 				dot.render( camera );
-				debugText.render(40,40);
+				debug.render();
+				
+				
+				
 				//Update screen
 				SDL_RenderPresent( gRenderer );
 				//++countedFrames;
