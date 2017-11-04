@@ -1,3 +1,10 @@
+#ifndef GLOBALS_H
+#define GLOBALS_H
+
+//class TTF_Font;
+//class LTexture;
+//class Tile;
+
 //Screen dimension constants
 const int SCREEN_WIDTH = 480;
 const int SCREEN_HEIGHT = 272;
@@ -67,3 +74,5 @@ SDL_Renderer* gRenderer = NULL;
 LTexture gDotTexture;
 LTexture gTileTexture;
 SDL_Rect gTileClips[ TOTAL_TILE_SPRITES ];
+
+#endif

@@ -1,8 +1,10 @@
-#include "debug.h"
-#include "textures.h"
-#include <stdio.h.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <stdio.h>
+#include "textures.h"
+#include "debug.h"
+
+
 
 Debug::Debug()
 {

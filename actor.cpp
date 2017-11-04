@@ -1,8 +1,8 @@
-#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <string>
-#include "actor.h"
 #include "textures.h"
 #include "tiles.h"
+#include "actor.h"
 #include "globals.h"
 
 Dot::Dot()
@@ -148,5 +148,5 @@ void Dot::setCamera( SDL_Rect& camera )
 void Dot::render( SDL_Rect& camera )
 {
     //Show the dot
-	extern gDotTexture.render( mBox.x - camera.x, mBox.y - camera.y );
+	gDotTexture.render( mBox.x - camera.x, mBox.y - camera.y );
 }

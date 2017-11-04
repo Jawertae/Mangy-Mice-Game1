@@ -1,12 +1,13 @@
 //The dot that will move around on the screen
 class Tile;
-
+class LTexture;
 
 extern const int LEVEL_WIDTH;
 extern const int LEVEL_HEIGHT;
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
 
+extern LTexture gDotTexture;
 
 
 class Dot

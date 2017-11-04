@@ -23,4 +23,4 @@ all : $(OBJS)
 win : $(OBJS)
 	$(WCC) $(OBJS) $(WIN_FLAGS) $(LINKER_FLAGS) -o $(WIN_NAME)
 actor : $(OBJS)
-	$(CC) actor.cpp $(COMPILER_FLAGS) $(LINKER_FLAGS) -o actor.o
+	$(CC) actor.cpp globals.cpp $(COMPILER_FLAGS) $(LINKER_FLAGS) -o actor.o

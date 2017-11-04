@@ -1,9 +1,11 @@
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 #include <fstream>
 #include <string>
-#include "globals.h"
 #include "textures.h"
+#include "textures.cpp"
 #include "tiles.h"
+#include "globals.h"
 
 
 int get_Scalar()

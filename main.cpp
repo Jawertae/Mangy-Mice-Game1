@@ -7,7 +7,7 @@
 #include <string>
 #include <fstream>
 #include <math.h>
-#include "globals.h
+#include "globals.h"
 #include "textures.h"
 #include "tiles.h"
 #include "actor.h"
