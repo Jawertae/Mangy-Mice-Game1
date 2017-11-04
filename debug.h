@@ -12,5 +12,5 @@ class Debug
 	private:
 		LTexture debugText;
 		SDL_Color textColor = {3,3,3};
-		char * jumpBool;
+		std::string jumpBool;
 };
