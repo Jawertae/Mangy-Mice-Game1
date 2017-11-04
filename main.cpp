@@ -5,8 +5,8 @@
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
 #include <string>
-#include <fstream>
-#include <math.h>
+//#include <fstream>
+//#include <math.h>
 #include "globals.h"
 #include "actor.h"
 #include "debug.h"
