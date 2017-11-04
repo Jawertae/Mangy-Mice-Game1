@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = main.cpp actor.cpp debug.cpp
+OBJS = main.cpp actor.cpp debug.cpp globals.cpp
 
 #CC specifies which compiler we're using
 CC = g++
@@ -7,7 +7,7 @@ WCC = i686-w64-mingw32-g++
 
 #COMPILER_FLAGS specifies the additional compilation options we're using
 # -w suppresses all warnings
-COMPILER_FLAGS = -w
+COMPILER_FLAGS = -w -std=c++11
 WIN_FLAGS = -w -mwindows
 
 #LINKER_FLAGS specifies the libraries we're linking against

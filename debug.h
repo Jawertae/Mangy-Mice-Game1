@@ -1,3 +1,6 @@
+#ifndef DEBUG_H
+#define DEBUG_H
+
 //class for all debug actions
 class Debug
 {
@@ -14,3 +17,4 @@ class Debug
 		SDL_Color textColor = {3,3,3};
 		std::string jumpBool;
 };
+#endif

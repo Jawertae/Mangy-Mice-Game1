@@ -1,3 +1,6 @@
+#ifndef ACTOR_H
+#define ACTOR_H
+
 //The dot that will move around on the screen
 
 extern const int LEVEL_WIDTH;
@@ -49,3 +52,4 @@ class Dot
 		int mVelX, mVelY;
 		bool loadMedia(std::string path);
 };
+#endif

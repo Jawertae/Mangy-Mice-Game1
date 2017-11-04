@@ -2,8 +2,7 @@
 #include <SDL2/SDL_image.h>
 #include <fstream>
 #include <string>
-#include "textures.h"
-#include "tiles.h"
+//#include <iostream.h>
 #include "globals.h"
 
 
