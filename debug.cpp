@@ -1,7 +1,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <stdio.h>
-#include "textures.h"
+#include "globals.h"
 #include "debug.h"
 
 

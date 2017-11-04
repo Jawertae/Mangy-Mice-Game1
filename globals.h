@@ -1,9 +1,6 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-//class TTF_Font;
-//class LTexture;
-//class Tile;
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 480;
@@ -46,6 +43,43 @@ TTF_Font *gFont = NULL;
 //Starts up SDL and creates window
 bool init();
 
+
+
+int get_Scalar();
+
+//The window we'll be rendering to
+SDL_Window* gWindow = NULL;
+
+//The window renderer
+SDL_Renderer* gRenderer = NULL;
+
+
+
+
+//The tile
+class Tile
+{
+    public:
+		//Initializes position and type
+		Tile( int x, int y, int tileType );
+
+		//Shows the tile
+		void render( SDL_Rect& camera );
+
+		//Get the tile type
+		int getType();
+
+		//Get the collision box
+		SDL_Rect getBox();
+
+    private:
+		//The attributes of the tile
+		SDL_Rect mBox;
+
+		//The tile type
+		int mType;
+};
+
 //Loads media
 bool loadMedia( Tile* tiles[] );
 
@@ -62,17 +96,67 @@ bool touchesFloor( SDL_Rect box, Tile* tiles[] );
 //Sets tiles from tile map
 bool setTiles( Tile *tiles[] );
 
-int get_Scalar();
 
-//The window we'll be rendering to
-SDL_Window* gWindow = NULL;
 
-//The window renderer
-SDL_Renderer* gRenderer = NULL;
+//Texture wrapper class
+class LTexture
+{
+	public:
+		//Initializes variables
+		LTexture();
+
+		//Deallocates memory
+		~LTexture();
+
+		//Loads image at specified path
+		bool loadFromFile( std::string path );
+
+		#ifdef _SDL_TTF_H
+		//Creates image from font string
+		bool loadFromRenderedText( std::string textureText, SDL_Color textColor );
+		#endif
+
+		//Deallocates texture
+		void free();
+
+		//Set color modulation
+		void setColor( Uint8 red, Uint8 green, Uint8 blue );
+
+		//Set blending
+		void setBlendMode( SDL_BlendMode blending );
+
+		//Set alpha modulation
+		void setAlpha( Uint8 alpha );
+
+		//Renders texture at given point
+		void render( int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE );
+
+		//Gets image dimensions
+		int getWidth();
+		int getHeight();
+
+	private:
+		//The actual hardware texture
+		SDL_Texture* mTexture;
+
+		//Image dimensions
+		int mWidth;
+		int mHeight;
+};
+
 
 //Scene textures
 LTexture gDotTexture;
 LTexture gTileTexture;
 SDL_Rect gTileClips[ TOTAL_TILE_SPRITES ];
+
+
+
+
+
+
+
+
+
 
 #endif

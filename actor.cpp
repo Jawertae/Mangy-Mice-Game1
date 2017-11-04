@@ -1,9 +1,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <string>
-#include "textures.h"
-#include "tiles.h"
-#include "actor.h"
 #include "globals.h"
+#include "actor.h"
 
 Dot::Dot()
 {
@@ -19,6 +17,24 @@ Dot::Dot()
 
     //Initialize Jumping
     jumpLock = 0;
+	loadMedia("assets/dot.bmp");
+}
+
+Dot::~Dot()
+{
+	texture.free();
+}
+
+bool Dot::loadMedia( std::string path )
+{
+	bool success;
+	//Load dot texture
+	if( !texture.loadFromFile( path ) )
+	{
+		printf( "Failed to load dot texture!\n" );
+		success = false;
+	}
+	return success;
 }
 
 void Dot::handleEvent( SDL_Event& e )
@@ -148,5 +164,5 @@ void Dot::setCamera( SDL_Rect& camera )
 void Dot::render( SDL_Rect& camera )
 {
     //Show the dot
-	gDotTexture.render( mBox.x - camera.x, mBox.y - camera.y );
+	texture.render( mBox.x - camera.x, mBox.y - camera.y );
 }

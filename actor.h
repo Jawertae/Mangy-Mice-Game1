@@ -1,13 +1,9 @@
 //The dot that will move around on the screen
-class Tile;
-class LTexture;
 
 extern const int LEVEL_WIDTH;
 extern const int LEVEL_HEIGHT;
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
-
-extern LTexture gDotTexture;
 
 
 class Dot
@@ -22,6 +18,7 @@ class Dot
 
 		//Initializes the variables
 		Dot();
+		~Dot();
 
 		//Takes key presses and adjusts the dot's velocity
 		void handleEvent( SDL_Event& e );
@@ -41,6 +38,7 @@ class Dot
 
     private:
 
+		LTexture texture;
 		bool jumpLock;
 		static const int jumpVel = 10;
 
@@ -49,4 +47,5 @@ class Dot
 
 		//The velocity of the dot
 		int mVelX, mVelY;
+		bool loadMedia(std::string path);
 };
