@@ -8,8 +8,8 @@ const int SCREEN_HEIGHT = 272;
 //const int SCREEN_FPS = 60;
 //const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 
-int SCREEN_WIDTH_TRUE = 480;
-int SCREEN_HEIGHT_TRUE = 272;
+int SCREEN_WIDTH_TRUE;
+int SCREEN_HEIGHT_TRUE;
 
 //The dimensions of the level
 const int LEVEL_WIDTH = 1280;
@@ -48,10 +48,10 @@ bool init();
 int get_Scalar();
 
 //The window we'll be rendering to
-SDL_Window* gWindow = NULL;
+SDL_Window* gWindow;
 
 //The window renderer
-SDL_Renderer* gRenderer = NULL;
+SDL_Renderer* gRenderer;
 
 
 
@@ -146,7 +146,7 @@ class LTexture
 
 
 //Scene textures
-LTexture gDotTexture;
+//LTexture gDotTexture;
 LTexture gTileTexture;
 SDL_Rect gTileClips[ TOTAL_TILE_SPRITES ];
 
