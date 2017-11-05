@@ -8,8 +8,8 @@ const int SCREEN_HEIGHT = 272;
 //const int SCREEN_FPS = 60;
 //const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 
-int SCREEN_WIDTH_TRUE;
-int SCREEN_HEIGHT_TRUE;
+//int SCREEN_WIDTH_TRUE;
+//int SCREEN_HEIGHT_TRUE;
 
 //The dimensions of the level
 const int LEVEL_WIDTH = 1280;
@@ -35,7 +35,7 @@ const int TILE_BOTTOMLEFT = 9;
 const int TILE_LEFT = 10;
 const int TILE_TOPLEFT = 11;
 
-TTF_Font *gFont = NULL;
+static TTF_Font *gFont = NULL;
 
 
 
@@ -43,18 +43,32 @@ TTF_Font *gFont = NULL;
 //Starts up SDL and creates window
 bool init();
 
-
+int getTotalTiles();
 
 int get_Scalar();
 
 //The window we'll be rendering to
-SDL_Window* gWindow;
+static SDL_Window* gWindow = NULL;
 
 //The window renderer
-SDL_Renderer* gRenderer;
+static SDL_Renderer* gRenderer = NULL;
 
+class LevelInfo
+{
+	public:
+		LevelInfo();
+		int h;
+		int w;
 
+};
 
+class ScreenInfo
+{
+	public:
+		ScreenInfo();
+		int w;
+		int h;
+};
 
 //The tile
 class Tile
@@ -62,6 +76,8 @@ class Tile
     public:
 		//Initializes position and type
 		Tile( int x, int y, int tileType );
+
+		int getTotal();
 
 		//Shows the tile
 		void render( SDL_Rect& camera );
@@ -78,6 +94,7 @@ class Tile
 
 		//The tile type
 		int mType;
+		int tileTotal;
 };
 
 //Loads media
@@ -147,14 +164,8 @@ class LTexture
 
 //Scene textures
 //LTexture gDotTexture;
-LTexture gTileTexture;
-SDL_Rect gTileClips[ TOTAL_TILE_SPRITES ];
-
-
-
-
-
-
+static LTexture gTileTexture;
+static SDL_Rect gTileClips[ TOTAL_TILE_SPRITES ];
 
 
 

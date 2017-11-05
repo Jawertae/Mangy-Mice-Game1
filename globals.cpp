@@ -6,47 +6,35 @@
 #include "globals.h"
 
 
-//Screen dimension constants
-const int SCREEN_WIDTH = 480;
-const int SCREEN_HEIGHT = 272;
-//const int SCREEN_FPS = 60;
-//const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 
 int SCREEN_WIDTH_TRUE = 480;
 int SCREEN_HEIGHT_TRUE = 272;
 
-//The dimensions of the level
-const int LEVEL_WIDTH = 1280;
-const int LEVEL_HEIGHT = 960;
-
-//Tile constants
-const int TILE_WIDTH = 80;
-const int TILE_HEIGHT = 80;
-const int TOTAL_TILES = 192;
-const int TOTAL_TILE_SPRITES = 12;
-
-//The different tile sprites
-const int TILE_RED = 0;
-const int TILE_GREEN = 1;
-const int TILE_BLUE = 2;
-const int TILE_CENTER = 3;
-const int TILE_TOP = 4;
-const int TILE_TOPRIGHT = 5;
-const int TILE_RIGHT = 6;
-const int TILE_BOTTOMRIGHT = 7;
-const int TILE_BOTTOM = 8;
-const int TILE_BOTTOMLEFT = 9;
-const int TILE_LEFT = 10;
-const int TILE_TOPLEFT = 11;
-
-TTF_Font *gFont = NULL;
+//TTF_Font *gFont = NULL;
 
 //The window we'll be rendering to
-SDL_Window* gWindow = NULL;
+//SDL_Window* gWindow = NULL;
 
 //The window renderer
-SDL_Renderer* gRenderer = NULL;
+//SDL_Renderer* gRenderer = NULL;
 
+LevelInfo::LevelInfo()
+{
+	h = LEVEL_HEIGHT;
+	w = LEVEL_WIDTH;
+}
+
+ScreenInfo::ScreenInfo()
+{
+	h = SCREEN_HEIGHT;
+	w = SCREEN_HEIGHT;
+}
+
+int getTotalTiles()
+{
+	printf("totalfiles");
+	return TOTAL_TILES;
+}
 
 int get_Scalar()
 {
@@ -85,7 +73,7 @@ bool init()
 {
 	//Initialization flag
 	bool success = true;
-
+//printf( "screen height: %s" , SCREEN_HEIGHT );
 	//Initialize SDL
 	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
 	{
@@ -94,6 +82,7 @@ bool init()
 	}
 	else
 	{
+printf("sdl init \n");
 		//Set texture filtering to linear
 		if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
 		{
@@ -109,8 +98,9 @@ bool init()
 		}
 		else
 		{
+printf("window made? \n");
 			//Create renderer for window
-			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED || SDL_RENDERER_PRESENTVSYNC);
+			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_SOFTWARE || SDL_RENDERER_ACCELERATED || SDL_RENDERER_PRESENTVSYNC);
 			if( gRenderer == NULL )
 			{
 				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -118,6 +108,7 @@ bool init()
 			}
 			else
 			{
+printf("renderer created \n");
 				//Initialize renderer color
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 
@@ -155,14 +146,14 @@ bool loadMedia( Tile* tiles[] )
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
 	}
-
+printf("loaded dem tiles \n");
 	//Load tile map
 	if( !setTiles( tiles ) )
 	{
 		printf( "Failed to load tile set!\n" );
 		success = false;
 	}
-
+printf("loaded tilemap \n");
         //Load TTF
         gFont = TTF_OpenFont( "assets/ph.ttf", 28 );
         if( gFont == NULL)
@@ -170,6 +161,7 @@ bool loadMedia( Tile* tiles[] )
             printf( "Failed to load font!\n" );
             success = false;
         }
+printf("loaded dat font \n");
 	return success;
 }
 
@@ -181,12 +173,19 @@ Tile::Tile( int x, int y, int tileType )
     mBox.x = x;
     mBox.y = y;
 
+	tileTotal = TOTAL_TILES;
+
     //Set the collision box
     mBox.w = TILE_WIDTH;
     mBox.h = TILE_HEIGHT;
 
     //Get the tile type
     mType = tileType;
+}
+
+int Tile::getTotal()
+{
+	return tileTotal;
 }
 
 void Tile::render( SDL_Rect& camera )
@@ -229,7 +228,6 @@ void close( Tile* tiles[] )
         gFont = NULL;
 
 	//Free loaded images
-	gDotTexture.free();
 	gTileTexture.free();
 
 	//Destroy window
@@ -308,9 +306,11 @@ bool setTiles( Tile* tiles[] )
     }
 	else
 	{
+printf("_");
 		//Initialize the tiles
 		for( int i = 0; i < TOTAL_TILES; ++i )
 		{
+
 			//Determines what kind of tile will be made
 			int tileType = -1;
 

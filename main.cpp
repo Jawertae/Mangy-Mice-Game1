@@ -11,10 +11,23 @@
 #include "actor.h"
 #include "debug.h"
 
+//extern int TOTAL_TILES;
+//extern int SCREEN_WIDTH;
+//extern int SCREEN_HEIGHT;
 
 
 int main( int argc, char* args[] )
 {
+printf("wtf \n");
+//std::string s = std::to_string(TOTAL_TILES);
+//int tots = TOTAL_TILES;
+//if(printf("what is reported total tiles: %s\n",tots) < 0){return 0;}
+
+
+int totes = getTotalTiles();
+
+printf("past second tilesthing");
+
 	//Start up SDL and create window
 	if( !init() )
 	{
@@ -22,9 +35,10 @@ int main( int argc, char* args[] )
 	}
 	else
 	{
+printf("initialized \n");
 		//The level tiles
 		Tile* tileSet[ TOTAL_TILES ];
-
+//printf("total tiles: %s", s );
 		//Load media
 		if( !loadMedia( tileSet ) )
 		{
@@ -32,6 +46,7 @@ int main( int argc, char* args[] )
 		}
 		else
 		{
+printf("media loaded \n" );
 			//Main loop flag
 			bool quit = false;
 
@@ -54,13 +69,13 @@ int main( int argc, char* args[] )
 			//int countedFrames = 0;
 			//fpsTimer.start();
 
-
+printf("should be at gameloop \n");
 
 			//While application is running
 			while( !quit )
 			{
 				//capTimer.start();
-
+				//printf("lol");
 				//Handle events on queue
 				while( SDL_PollEvent( &e ) != 0 )
 				{
@@ -81,7 +96,6 @@ int main( int argc, char* args[] )
 				//Move the dot
 				dot.move( tileSet );
 				dot.setCamera( camera );
-				
 				debug.update(dot.canJump());
 
 				//Clear screen
@@ -97,9 +111,8 @@ int main( int argc, char* args[] )
 				//Render dot
 				dot.render( camera );
 				debug.render();
-				
-				
-				
+
+
 				//Update screen
 				SDL_RenderPresent( gRenderer );
 				//++countedFrames;
