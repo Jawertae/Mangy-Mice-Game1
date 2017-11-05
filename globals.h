@@ -98,7 +98,7 @@ class Tile
 };
 
 //Loads media
-bool loadMedia( Tile* tiles[] );
+bool loadMedia( Tile* tiles[] , SDL_Renderer* );
 
 //Frees media and shuts down SDL
 void close( Tile* tiles[] );
@@ -126,7 +126,7 @@ class LTexture
 		~LTexture();
 
 		//Loads image at specified path
-		bool loadFromFile( std::string path );
+		bool loadFromFile( std::string path , SDL_Renderer* );
 
 		#ifdef _SDL_TTF_H
 		//Creates image from font string

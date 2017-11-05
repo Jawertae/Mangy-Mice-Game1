@@ -20,7 +20,7 @@ class Dot
 		static const int DOT_VEL = 20;
 
 		//Initializes the variables
-		Dot();
+		Dot( SDL_Renderer* lRenderer );
 		~Dot();
 
 		//Takes key presses and adjusts the dot's velocity
@@ -50,6 +50,6 @@ class Dot
 
 		//The velocity of the dot
 		int mVelX, mVelY;
-		bool loadMedia(std::string path);
+		bool loadMedia( std::string path, SDL_Renderer* lRenderer );
 };
 #endif

@@ -3,7 +3,7 @@
 #include "globals.h"
 #include "actor.h"
 
-Dot::Dot()
+Dot::Dot(SDL_Renderer* lRenderer)
 {
     //Initialize the collision box
     mBox.x = 0;
@@ -17,7 +17,7 @@ Dot::Dot()
 
     //Initialize Jumping
     jumpLock = 0;
-	loadMedia("assets/dot.bmp");
+	loadMedia("assets/dot.bmp",lRenderer);
 }
 
 Dot::~Dot()
@@ -25,11 +25,11 @@ Dot::~Dot()
 	texture.free();
 }
 
-bool Dot::loadMedia( std::string path )
+bool Dot::loadMedia( std::string path , SDL_Renderer* lRenderer)
 {
 	bool success;
 	//Load dot texture
-	if( !texture.loadFromFile( path ) )
+	if( !texture.loadFromFile( path , lRenderer ) )
 	{
 		printf( "Failed to load dot texture!\n" );
 		success = false;

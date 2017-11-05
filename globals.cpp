@@ -72,25 +72,25 @@ int get_Scalar()
 
 
 
-bool loadMedia( Tile* tiles[] )
+bool loadMedia( Tile* tiles[] , SDL_Renderer* lRenderer)
 {
 	//Loading success flag
 	bool success = true;
 
 	//Load tile texture
-	if( !gTileTexture.loadFromFile( "assets/tiles.png" ) )
+	if( !gTileTexture.loadFromFile( "assets/tiles.png",lRenderer ) )
 	{
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
 	}
-printf("loaded dem tiles \n");
+	//printf("loaded dem tiles \n");
 	//Load tile map
 	if( !setTiles( tiles ) )
 	{
 		printf( "Failed to load tile set!\n" );
 		success = false;
 	}
-printf("loaded tilemap \n");
+	//printf("loaded tilemap \n");
         //Load TTF
         gFont = TTF_OpenFont( "assets/ph.ttf", 28 );
         if( gFont == NULL)
@@ -98,7 +98,7 @@ printf("loaded tilemap \n");
             printf( "Failed to load font!\n" );
             success = false;
         }
-printf("loaded dat font \n");
+	//printf("loaded dat font \n");
 	return success;
 }
 
@@ -402,7 +402,7 @@ LTexture::~LTexture()
 	free();
 }
 
-bool LTexture::loadFromFile( std::string path )
+bool LTexture::loadFromFile( std::string path , SDL_Renderer* lRenderer)
 {
 	//Get rid of preexisting texture
 	free();
@@ -422,7 +422,7 @@ bool LTexture::loadFromFile( std::string path )
 		SDL_SetColorKey( loadedSurface, SDL_TRUE, SDL_MapRGB( loadedSurface->format, 0, 0xFF, 0xFF ) );
 
 		//Create texture from surface pixels
-                newTexture = SDL_CreateTextureFromSurface( gRenderer, loadedSurface );
+                newTexture = SDL_CreateTextureFromSurface( lRenderer, loadedSurface );
 		if( newTexture == NULL )
 		{
 			printf( "Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );

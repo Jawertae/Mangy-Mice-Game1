@@ -1,33 +1,14 @@
-//lol bitches
-
-//#include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
 #include <string>
-//#include <fstream>
-//#include <math.h>
 #include "globals.h"
 #include "actor.h"
 #include "debug.h"
 
-//extern int TOTAL_TILES;
-//extern int SCREEN_WIDTH;
-//extern int SCREEN_HEIGHT;
-
 
 int main( int argc, char* args[] )
 {
-printf("wtf \n");
-//std::string s = std::to_string(TOTAL_TILES);
-//int tots = TOTAL_TILES;
-//if(printf("what is reported total tiles: %s\n",tots) < 0){return 0;}
-
-
-int totes = getTotalTiles();
-
-printf("past second tilesthing");
-
 	//Start up SDL and create window
 	if( !init() )
 	{
@@ -35,18 +16,18 @@ printf("past second tilesthing");
 	}
 	else
 	{
-printf("initialized \n");
+		//printf("initialized \n");
 		//The level tiles
 		Tile* tileSet[ TOTAL_TILES ];
-//printf("total tiles: %s", s );
+		printf("Tileset Created %s\n");
 		//Load media
-		if( !loadMedia( tileSet ) )
+		if( !loadMedia( tileSet , gRenderer) )
 		{
 			printf( "Failed to load media!\n" );
 		}
 		else
 		{
-printf("media loaded \n" );
+		//printf("media loaded \n" );
 			//Main loop flag
 			bool quit = false;
 
@@ -54,28 +35,19 @@ printf("media loaded \n" );
 			SDL_Event e;
 
 			//The dot that will be moving around on the screen
-			Dot dot;
+			Dot dot(gRenderer);
 
 			//Level camera
 			SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
-			Debug debug;
-			
+//			Debug debug;
 
-			//fps stuff
-			//LTimer fpsTimer;
-			//LTimer capTimer;
 
-			//int countedFrames = 0;
-			//fpsTimer.start();
-
-printf("should be at gameloop \n");
+			//printf("should be at gameloop \n");
 
 			//While application is running
 			while( !quit )
 			{
-				//capTimer.start();
-				//printf("lol");
 				//Handle events on queue
 				while( SDL_PollEvent( &e ) != 0 )
 				{
@@ -89,14 +61,10 @@ printf("should be at gameloop \n");
 					dot.handleEvent( e );
 				}
 
-				//more fps stuff
-				//float avgFPS = countedFrames / (fpsTimer.getTicks() /1000.f );
-				//if avgFPS > 2000000 ) { avgFPS = 0; }
-
 				//Move the dot
 				dot.move( tileSet );
 				dot.setCamera( camera );
-				debug.update(dot.canJump());
+//				debug.update(dot.canJump());
 
 				//Clear screen
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
@@ -110,18 +78,11 @@ printf("should be at gameloop \n");
 
 				//Render dot
 				dot.render( camera );
-				debug.render();
+//				debug.render();
 
 
 				//Update screen
 				SDL_RenderPresent( gRenderer );
-				//++countedFrames;
-
-				//int frameTicks = capTimer.getTicks();
-				//if( frameTicks < SCREEN_TICKS_PER_FRAME )
-				//{
-				//	SDL_Delay( SCREEN_TICKS_PER+FRAME - frameTicks );
-				//}
 
 			}
 		}
@@ -138,7 +99,7 @@ bool init()
 {
 	//Initialization flag
 	bool success = true;
-//printf( "screen height: %s" , SCREEN_HEIGHT );
+
 	//Initialize SDL
 	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
 	{
@@ -147,7 +108,7 @@ bool init()
 	}
 	else
 	{
-printf("sdl init \n");
+		//printf("sdl init \n");
 		//Set texture filtering to linear
 		if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
 		{
@@ -163,7 +124,7 @@ printf("sdl init \n");
 		}
 		else
 		{
-printf("window made? \n");
+			//printf("window made? \n");
 			//Create renderer for window
 			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_SOFTWARE || SDL_RENDERER_ACCELERATED || SDL_RENDERER_PRESENTVSYNC);
 			if( gRenderer == NULL )
@@ -173,11 +134,11 @@ printf("window made? \n");
 			}
 			else
 			{
-printf("renderer created \n");
+				//printf("renderer created \n");
 				//Initialize renderer color
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 
-//				get_Scalar();
+				//get_Scalar();
 
 				//Initialize PNG loading
 				int imgFlags = IMG_INIT_PNG;
@@ -195,6 +156,6 @@ printf("renderer created \n");
 			}
 		}
 	}
-
+	printf("init done \n");
 	return success;
 }
