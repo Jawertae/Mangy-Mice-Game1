@@ -1,24 +1,15 @@
-<<<<<<< HEAD
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_image.h>
-#include <stdio.h>
-#include <string>
-#include "globals.h"
-#include "actor.h"
-#include "debug.h"
-=======
 //lol bitches
 
 //#include <SDL2/SDL.h>
-//#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
 #include <string>
 #include <fstream>
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 1920;
-const int SCREEN_HEIGHT = 1080;
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
 
 //The dimensions of the level
 const int LEVEL_WIDTH = 1280;
@@ -43,6 +34,8 @@ const int TILE_BOTTOM = 8;
 const int TILE_BOTTOMLEFT = 9;
 const int TILE_LEFT = 10;
 const int TILE_TOPLEFT = 11;
+
+TTF_Font *gFont = NULL;
 
 //Texture wrapper class
 class LTexture
@@ -132,6 +125,8 @@ class Dot
 		void handleEvent( SDL_Event& e );
 
 		//Moves the dot and check collision against tiles
+                void jump();
+                void gravity();
 		void move( Tile *tiles[] );
 
 		//Centers the camera over the dot
@@ -143,7 +138,7 @@ class Dot
     private:
 
 		bool jumpLock;
-		static const int jumpVel = 15;
+		static const int jumpVel = 10;
 
 		//Collision box of the dot
 		SDL_Rect mBox;
@@ -164,36 +159,59 @@ void close( Tile* tiles[] );
 //Box collision detector
 bool checkCollision( SDL_Rect a, SDL_Rect b );
 
-//Checks collision box against set of tiles
+//Checks collision box against set of tiles and floor
 bool touchesWall( SDL_Rect box, Tile* tiles[] );
+bool touchesFloor( SDL_Rect box, Tile* tiles[] );
 
 //Sets tiles from tile map
 bool setTiles( Tile *tiles[] );
->>>>>>> parent of eca596d... added (broken) jump and text engine
 
+//The window we'll be rendering to
+SDL_Window* gWindow = NULL;
 
-int main( int argc, char* args[] )
+//The window renderer
+SDL_Renderer* gRenderer = NULL;
+
+//Scene textures
+LTexture gDotTexture;
+LTexture gTileTexture;
+SDL_Rect gTileClips[ TOTAL_TILE_SPRITES ];
+
+LTexture::LTexture()
 {
-	//Start up SDL and create window
-	if( !init() )
+	//Initialize
+	mTexture = NULL;
+	mWidth = 0;
+	mHeight = 0;
+}
+
+LTexture::~LTexture()
+{
+	//Deallocate
+	free();
+}
+
+bool LTexture::loadFromFile( std::string path )
+{
+	//Get rid of preexisting texture
+	free();
+
+	//The final texture
+	SDL_Texture* newTexture = NULL;
+
+	//Load image at specified path
+	SDL_Surface* loadedSurface = IMG_Load( path.c_str() );
+	if( loadedSurface == NULL )
 	{
-		printf( "Failed to initialize!\n" );
+		printf( "Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError() );
 	}
 	else
 	{
-<<<<<<< HEAD
-		//printf("initialized \n");
-		//The level tiles
-		Tile* tileSet[ TOTAL_TILES ];
-		printf("Tileset Created %s\n");
-		//Load media
-		if( !loadMedia( tileSet , gRenderer) )
-=======
 		//Color key image
 		SDL_SetColorKey( loadedSurface, SDL_TRUE, SDL_MapRGB( loadedSurface->format, 0, 0xFF, 0xFF ) );
 
 		//Create texture from surface pixels
-        newTexture = SDL_CreateTextureFromSurface( gRenderer, loadedSurface );
+                newTexture = SDL_CreateTextureFromSurface( gRenderer, loadedSurface );
 		if( newTexture == NULL )
 		{
 			printf( "Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
@@ -225,52 +243,135 @@ bool LTexture::loadFromRenderedText( std::string textureText, SDL_Color textColo
 	if( textSurface != NULL )
 	{
 		//Create texture from surface pixels
-        mTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
+                mTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
 		if( mTexture == NULL )
->>>>>>> parent of eca596d... added (broken) jump and text engine
 		{
-			printf( "Failed to load media!\n" );
+			printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
 		}
 		else
 		{
-		//printf("media loaded \n" );
-			//Main loop flag
-			bool quit = false;
+			//Get image dimensions
+			mWidth = textSurface->w;
+			mHeight = textSurface->h;
+		}
 
-			//Event handler
-			SDL_Event e;
-
-<<<<<<< HEAD
-			//The dot that will be moving around on the screen
-			Dot dot(gRenderer);
-
-			//Level camera
-			SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
-
-//			Debug debug;
+		//Get rid of old surface
+		SDL_FreeSurface( textSurface );
+	}
+	else
+	{
+		printf( "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError() );
+	}
 
 
-			//printf("should be at gameloop \n");
+	//Return success
+	return mTexture != NULL;
+}
+#endif
 
-			//While application is running
-			while( !quit )
-			{
-				//Handle events on queue
-				while( SDL_PollEvent( &e ) != 0 )
-				{
-					//User requests quit
-					if( e.type == SDL_QUIT || e.key.keysym.sym == SDLK_q )
-					{
-						quit = true;
-					}
+void LTexture::free()
+{
+	//Free texture if it exists
+	if( mTexture != NULL )
+	{
+		SDL_DestroyTexture( mTexture );
+		mTexture = NULL;
+		mWidth = 0;
+		mHeight = 0;
+	}
+}
 
-					//Handle input for the dot
-					dot.handleEvent( e );
-				}
-=======
+void LTexture::setColor( Uint8 red, Uint8 green, Uint8 blue )
+{
+	//Modulate texture rgb
+	SDL_SetTextureColorMod( mTexture, red, green, blue );
+}
+
+void LTexture::setBlendMode( SDL_BlendMode blending )
+{
+	//Set blending function
+	SDL_SetTextureBlendMode( mTexture, blending );
+}
+
+void LTexture::setAlpha( Uint8 alpha )
+{
+	//Modulate texture alpha
+	SDL_SetTextureAlphaMod( mTexture, alpha );
+}
+
+void LTexture::render( int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip )
+{
+	//Set rendering space and render to screen
+	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
+
+	//Set clip rendering dimensions
+	if( clip != NULL )
+	{
+		renderQuad.w = clip->w;
+		renderQuad.h = clip->h;
+	}
+
+	//Render to screen
+	SDL_RenderCopyEx( gRenderer, mTexture, clip, &renderQuad, angle, center, flip );
+}
+
+int LTexture::getWidth()
+{
+	return mWidth;
+}
+
+int LTexture::getHeight()
+{
+	return mHeight;
+}
+
+Tile::Tile( int x, int y, int tileType )
+{
+    //Get the offsets
+    mBox.x = x;
+    mBox.y = y;
+
+    //Set the collision box
+    mBox.w = TILE_WIDTH;
+    mBox.h = TILE_HEIGHT;
+
+    //Get the tile type
+    mType = tileType;
+}
+
+void Tile::render( SDL_Rect& camera )
+{
+    //If the tile is on screen
+    if( checkCollision( camera, mBox ) )
+    {
+        //Show the tile
+        gTileTexture.render( mBox.x - camera.x, mBox.y - camera.y, &gTileClips[ mType ] );
+    }
+}
+
+int Tile::getType()
+{
+    return mType;
+}
+
+SDL_Rect Tile::getBox()
+{
+    return mBox;
+}
+
+Dot::Dot()
+{
+    //Initialize the collision box
+    mBox.x = 0;
+    mBox.y = 0;
+	mBox.w = DOT_WIDTH;
+	mBox.h = DOT_HEIGHT;
+
     //Initialize the velocity
     mVelX = 0;
     mVelY = 0;
+
+    //Initialize Jumping
     jumpLock = 0;
 }
 
@@ -282,11 +383,12 @@ void Dot::handleEvent( SDL_Event& e )
         //Adjust the velocity
         switch( e.key.keysym.sym )
         {
-            case SDLK_UP: mVelY -= DOT_VEL; break;
-            case SDLK_DOWN: mVelY += DOT_VEL; break;
+//            case SDLK_UP: mVelY -= DOT_VEL; break;
+//            case SDLK_DOWN: mVelY += DOT_VEL; break;
             case SDLK_LEFT: mVelX -= DOT_VEL; break;
             case SDLK_RIGHT: mVelX += DOT_VEL; break;
-	    case SDLK_SPACE: if(!jumpLock) {mVelY -= jumpVel;jumpLock=1;} break;
+	    case SDLK_SPACE: if(!jumpLock) { jump(); }; break;
+            case SDLK_o: jumpLock=0; jump(); break;
         }
     }
     //If a key was released
@@ -295,12 +397,44 @@ void Dot::handleEvent( SDL_Event& e )
         //Adjust the velocity
         switch( e.key.keysym.sym )
         {
-            case SDLK_UP: mVelY += DOT_VEL; break;
-            case SDLK_DOWN: mVelY -= DOT_VEL; break;
+//            case SDLK_UP: mVelY += DOT_VEL; break;
+//            case SDLK_DOWN: mVelY -= DOT_VEL; break;
             case SDLK_LEFT: mVelX += DOT_VEL; break;
             case SDLK_RIGHT: mVelX -= DOT_VEL; break;
-	    case SDLK_SPACE: if(jumpLock) {mVelY += jumpVel;} break;
+	    case SDLK_SPACE: mVelY = 0 ; break;
         }
+    }
+}
+
+void Dot::jump()
+{
+    //Jump
+    mVelY -= jumpVel;
+
+}
+
+void Dot::gravity()
+{
+    //is he in the air?
+    if( ( mBox.y + DOT_HEIGHT < LEVEL_HEIGHT ) )// && ( !touchesFloor( mBox, tiles) ) )
+    {
+        if (mVelY < 5) //check to see if he is terminal velocity yet
+        {
+            ++mVelY; //fall faster or ascend slower
+        }
+        else
+        {
+            //terminal velocity
+            mVelY = 5;
+        }
+    }
+    else if( mBox.y + DOT_HEIGHT > LEVEL_HEIGHT)
+    {
+        mVelY = 0;
+        mBox.y = LEVEL_HEIGHT - DOT_HEIGHT;
+    }
+    else {
+        mVelY = 0;
     }
 }
 
@@ -308,52 +442,68 @@ void Dot::move( Tile *tiles[] )
 {
     //Move the dot left or right
     mBox.x += mVelX;
->>>>>>> parent of eca596d... added (broken) jump and text engine
 
-				//Move the dot
-				dot.move( tileSet );
-				dot.setCamera( camera );
-//				debug.update(dot.canJump());
+    //If the dot went too far to the left or right or touched a wall
+    if( ( mBox.x < 0 ) || ( mBox.x + DOT_WIDTH > LEVEL_WIDTH ) || touchesWall( mBox, tiles ) )
+    {
+        //move back
+        mBox.x -= mVelX;
+    }
 
-				//Clear screen
-				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-				SDL_RenderClear( gRenderer );
+    //Move the dot up or down
+    mBox.y += mVelY;
 
-<<<<<<< HEAD
-				//Render level
-				for( int i = 0; i < TOTAL_TILES; ++i )
-				{
-					tileSet[ i ]->render( camera );
-				}
+    //factor in gravity
+    gravity();
 
-				//Render dot
-				dot.render( camera );
-//				debug.render();
-
-
-				//Update screen
-				SDL_RenderPresent( gRenderer );
-=======
     //If the dot went too far up or down or touched a wall
     if( ( mBox.y < 0 ) || ( mBox.y + DOT_HEIGHT > LEVEL_HEIGHT ) || touchesWall( mBox, tiles ) )
     {
         //move back
-	jumpLock = 0;
         mBox.y -= mVelY;
     }
+
+    //double duty for falling
+  //  if( ( mBox.y <= 0 ) )
+  //  {
+  //      //can jump again if touching or below the ground
+  //      jumpLock = 0;
+  //      //no vertical movement if theyre on the ground
+  //      mVelY = 0;
+  //  }
+
 }
->>>>>>> parent of eca596d... added (broken) jump and text engine
 
-			}
-		}
+void Dot::setCamera( SDL_Rect& camera )
+{
+	//Center the camera over the dot
+	camera.x = ( mBox.x + DOT_WIDTH / 2 ) - SCREEN_WIDTH / 2;
+	camera.y = ( mBox.y + DOT_HEIGHT / 2 ) - SCREEN_HEIGHT / 2;
 
-		//Free resources and close SDL
-		close( tileSet );
+	//Keep the camera in bounds
+	if( camera.x < 0 )
+	{
+		camera.x = 0;
 	}
-
-	return 0;
+	if( camera.y < 0 )
+	{
+		camera.y = 0;
+	}
+	if( camera.x > LEVEL_WIDTH - camera.w )
+	{
+		camera.x = LEVEL_WIDTH - camera.w;
+	}
+	if( camera.y > LEVEL_HEIGHT - camera.h )
+	{
+		camera.y = LEVEL_HEIGHT - camera.h;
+	}
 }
 
+void Dot::render( SDL_Rect& camera )
+{
+    //Show the dot
+	gDotTexture.render( mBox.x - camera.x, mBox.y - camera.y );
+}
 
 bool init()
 {
@@ -368,7 +518,6 @@ bool init()
 	}
 	else
 	{
-		//printf("sdl init \n");
 		//Set texture filtering to linear
 		if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
 		{
@@ -376,7 +525,7 @@ bool init()
 		}
 
 		//Create window
-		gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP );
+		gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_FULLSCREEN );
 		if( gWindow == NULL )
 		{
 			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -384,9 +533,8 @@ bool init()
 		}
 		else
 		{
-			//printf("window made? \n");
 			//Create renderer for window
-			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_SOFTWARE || SDL_RENDERER_ACCELERATED || SDL_RENDERER_PRESENTVSYNC);
+			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED);
 			if( gRenderer == NULL )
 			{
 				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -394,11 +542,8 @@ bool init()
 			}
 			else
 			{
-				//printf("renderer created \n");
 				//Initialize renderer color
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-
-				//get_Scalar();
 
 				//Initialize PNG loading
 				int imgFlags = IMG_INIT_PNG;
@@ -407,20 +552,11 @@ bool init()
 					printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
 					success = false;
 				}
-<<<<<<< HEAD
-				//Initialize Font
                                 if( TTF_Init() == -1 )
                                 {
                                     printf( "SDL_TTF could not Initialize! %s\n", TTF_GetError() );
                                     success = false;
                                 }
-			}
-		}
-	}
-	printf("init done \n");
-	return success;
-}
-=======
 			}
 		}
 	}
@@ -454,6 +590,13 @@ bool loadMedia( Tile* tiles[] )
 		success = false;
 	}
 
+        //Load TTF
+        gFont = TTF_OpenFont( "assets/ph.ttf", 28 );
+        if( gFont == NULL)
+        {
+            printf( "Failed to load font!\n" );
+            success = false;
+        }
 	return success;
 }
 
@@ -469,6 +612,10 @@ void close( Tile* tiles[] )
 		 }
 	}
 
+        //Free Global Font
+        TTF_CloseFont( gFont );
+        gFont = NULL;
+
 	//Free loaded images
 	gDotTexture.free();
 	gTileTexture.free();
@@ -481,6 +628,7 @@ void close( Tile* tiles[] )
 
 	//Quit SDL subsystems
 	IMG_Quit();
+        TTF_Quit();
 	SDL_Quit();
 }
 
@@ -686,6 +834,11 @@ bool touchesWall( SDL_Rect box, Tile* tiles[] )
     return false;
 }
 
+bool touchesFloor( SDL_Rect box, Tile* tiles[] )
+{
+    ;
+}
+
 int main( int argc, char* args[] )
 {
 	//Start up SDL and create window
@@ -761,4 +914,3 @@ int main( int argc, char* args[] )
 
 	return 0;
 }
->>>>>>> parent of eca596d... added (broken) jump and text engine
