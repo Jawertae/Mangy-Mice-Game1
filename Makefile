@@ -30,3 +30,7 @@ nolink : $(OBJS)
 	$(CC) $(OBJS) $(COMPILER_FLAGS) -c
 link : $(COBJS)
 	$(CC) $(COBJS) $(LINKER_FLAGS) -o $(OBJ_NAME) 
+clean : $(COBJS)
+	rm $(COBJS) $(OBJ_NAME)
+debug : $()
+	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -D DEBUG -o $(OBJ_NAME)_debug

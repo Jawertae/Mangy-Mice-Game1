@@ -10,13 +10,6 @@
 int SCREEN_WIDTH_TRUE = 480;
 int SCREEN_HEIGHT_TRUE = 272;
 
-//TTF_Font *gFont = NULL;
-
-//The window we'll be rendering to
-//SDL_Window* gWindow = NULL;
-
-//The window renderer
-//SDL_Renderer* gRenderer = NULL;
 
 LevelInfo::LevelInfo()
 {
@@ -42,8 +35,8 @@ int get_Scalar()
 	float hor_scale = 1.0;
 	float vert_scale = 1.0;
 	int scalar = 1;
-	int hor = 0;
-	int vert = 0;
+	//int hor = 0;
+	//int vert = 0;
 
 	if( SDL_GetDesktopDisplayMode(0, info) != 0 )
 	{
@@ -56,15 +49,15 @@ int get_Scalar()
 		SCREEN_WIDTH_TRUE = info->w;
 		SCREEN_HEIGHT_TRUE = info->h;
 
-		hor_scale = SCREEN_WIDTH_TRUE/SCREEN_WIDTH;
-		vert_scale = SCREEN_HEIGHT_TRUE/SCREEN_HEIGHT;
+		hor_scale = (float)SCREEN_WIDTH_TRUE/(float)SCREEN_WIDTH;
+		vert_scale = (float)SCREEN_HEIGHT_TRUE/(float)SCREEN_HEIGHT;
 
-		scalar = !(vert_scale<hor_scale)?hor_scale:vert_scale;
+		scalar = (int)(!(vert_scale<hor_scale)?hor_scale:vert_scale);
 	}
 
 	//debug
-	printf( "Screen Dimensions: %s",SCREEN_WIDTH_TRUE, "x", SCREEN_HEIGHT_TRUE );
-	printf( "Horizontal: %s\n", hor_scale, "Vertical: %s\n", vert_scale, "Final: %s\n", scalar );
+	printf( "Screen Dimensions: %s",SCREEN_WIDTH_TRUE, SCREEN_HEIGHT_TRUE );
+	printf( "Horizontal: %d\nVertical: %d\nFinal: %d\n",hor_scale,vert_scale, scalar );
 
 	return scalar;
 }
@@ -83,14 +76,22 @@ bool loadMedia( Tile* tiles[] , SDL_Renderer* lRenderer)
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
 	}
-	//printf("loaded dem tiles \n");
+
+	#ifdef DEBUG
+	printf("Loaded Tile Texture.\n");
+	#endif
+
 	//Load tile map
 	if( !setTiles( tiles ) )
 	{
 		printf( "Failed to load tile set!\n" );
 		success = false;
 	}
-	//printf("loaded tilemap \n");
+
+	#ifdef DEBUG
+	printf("Rendered all Tiles.\n");
+	#endif
+
         //Load TTF
         gFont = TTF_OpenFont( "assets/ph.ttf", 28 );
         if( gFont == NULL)
@@ -98,7 +99,11 @@ bool loadMedia( Tile* tiles[] , SDL_Renderer* lRenderer)
             printf( "Failed to load font!\n" );
             success = false;
         }
-	//printf("loaded dat font \n");
+
+	#ifdef DEBUG
+	printf("Loaded Font.\n");
+	#endif
+
 	return success;
 }
 
@@ -144,8 +149,6 @@ SDL_Rect Tile::getBox()
 {
     return mBox;
 }
-
-
 
 
 void close( Tile* tiles[] )
@@ -243,7 +246,10 @@ bool setTiles( Tile* tiles[] )
     }
 	else
 	{
-printf("_");
+		#ifdef DEBUG
+		printf("Loaded Map File.");
+		#endif
+
 		//Initialize the tiles
 		for( int i = 0; i < TOTAL_TILES; ++i )
 		{
@@ -385,7 +391,7 @@ bool touchesWall( SDL_Rect box, Tile* tiles[] )
 
 bool touchesFloor( SDL_Rect box, Tile* tiles[] )
 {
-    ;
+
 }
 
 LTexture::LTexture()
@@ -444,7 +450,7 @@ bool LTexture::loadFromFile( std::string path , SDL_Renderer* lRenderer)
 }
 
 #ifdef _SDL_TTF_H
-bool LTexture::loadFromRenderedText( std::string textureText, SDL_Color textColor )
+bool LTexture::loadFromRenderedText( std::string textureText, SDL_Color textColor , SDL_Renderer* lRenderer)
 {
 	//Get rid of preexisting texture
 	free();
@@ -454,7 +460,7 @@ bool LTexture::loadFromRenderedText( std::string textureText, SDL_Color textColo
 	if( textSurface != NULL )
 	{
 		//Create texture from surface pixels
-                mTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
+                mTexture = SDL_CreateTextureFromSurface( lRenderer, textSurface );
 		if( mTexture == NULL )
 		{
 			printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );

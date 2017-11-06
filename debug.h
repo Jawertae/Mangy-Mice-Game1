@@ -5,8 +5,8 @@
 class Debug
 {
 	public:
-		Debug();
-		Debug(int,int,int);
+		Debug(SDL_Renderer*);
+		Debug(SDL_Renderer*,int,int,int);
 		void update();
 		void update(bool);
 		void render();
@@ -16,5 +16,6 @@ class Debug
 		LTexture debugText;
 		SDL_Color textColor = {3,3,3};
 		std::string jumpBool;
+		SDL_Renderer* lRenderer;
 };
 #endif

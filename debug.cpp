@@ -7,15 +7,17 @@
 
 
 
-Debug::Debug()
+Debug::Debug(SDL_Renderer* rendPtr)
 {
 	textColor = {3,3,3};
 	jumpBool = "unset";
+	lRenderer = rendPtr;
 }
-Debug::Debug(int r, int g, int b)
+Debug::Debug(SDL_Renderer* rendPtr, int r, int g, int b )
 {
 	textColor = {r,g,b};
 	jumpBool = "unset";
+	lRenderer = rendPtr;
 }
 
 void Debug::update()
@@ -29,7 +31,7 @@ void Debug::update(bool canJump)
 	if(canJump){jumpBool="jump";}
 	else {jumpBool="no";}
 
-	if( !debugText.loadFromRenderedText( jumpBool , textColor) )
+	if( !debugText.loadFromRenderedText( jumpBool , textColor, lRenderer) )
 	{
 		printf("failed to load debug text");
 	}

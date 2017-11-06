@@ -35,7 +35,7 @@ const int TILE_BOTTOMLEFT = 9;
 const int TILE_LEFT = 10;
 const int TILE_TOPLEFT = 11;
 
-static TTF_Font *gFont = NULL;
+extern TTF_Font *gFont;// = NULL;
 
 
 
@@ -48,10 +48,10 @@ int getTotalTiles();
 int get_Scalar();
 
 //The window we'll be rendering to
-static SDL_Window* gWindow = NULL;
+extern SDL_Window* gWindow;// = NULL;
 
 //The window renderer
-static SDL_Renderer* gRenderer = NULL;
+extern SDL_Renderer* gRenderer;// = NULL;
 
 class LevelInfo
 {
@@ -130,7 +130,7 @@ class LTexture
 
 		#ifdef _SDL_TTF_H
 		//Creates image from font string
-		bool loadFromRenderedText( std::string textureText, SDL_Color textColor );
+		bool loadFromRenderedText( std::string textureText, SDL_Color textColor, SDL_Renderer*  );
 		#endif
 
 		//Deallocates texture
@@ -163,11 +163,9 @@ class LTexture
 
 
 //Scene textures
-//LTexture gDotTexture;
-static LTexture gTileTexture;
-static SDL_Rect gTileClips[ TOTAL_TILE_SPRITES ];
-
-
+extern LTexture gDotTexture;
+extern LTexture gTileTexture;
+extern SDL_Rect gTileClips[ TOTAL_TILE_SPRITES ];
 
 
 #endif
