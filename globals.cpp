@@ -31,7 +31,7 @@ int getTotalTiles()
 
 int get_Scalar()
 {
-	SDL_DisplayMode* info;
+	SDL_DisplayMode* info = NULL;
 	float hor_scale = 1.0;
 	float vert_scale = 1.0;
 	int scalar = 1;
@@ -46,13 +46,20 @@ int get_Scalar()
 	else
 	{
 
-		SCREEN_WIDTH_TRUE = info->w;
-		SCREEN_HEIGHT_TRUE = info->h;
+		printf("Supposedly got current display\n");
 
-		hor_scale = (float)SCREEN_WIDTH_TRUE/(float)SCREEN_WIDTH;
-		vert_scale = (float)SCREEN_HEIGHT_TRUE/(float)SCREEN_HEIGHT;
+		if( info->w > 0 ) { SCREEN_WIDTH_TRUE = info->w; }
+		else{ return 1; }
+		if( info->h > 0 ) { SCREEN_HEIGHT_TRUE = info->h; }
+		else{ return 1; }
 
-		scalar = (int)(!(vert_scale<hor_scale)?hor_scale:vert_scale);
+		if(1)
+		{
+			hor_scale = (float)SCREEN_WIDTH_TRUE/(float)SCREEN_WIDTH;
+			vert_scale = (float)SCREEN_HEIGHT_TRUE/(float)SCREEN_HEIGHT;
+
+			scalar = (int)(!(vert_scale<hor_scale)?hor_scale:vert_scale);
+		}
 	}
 
 	//debug

@@ -14,6 +14,45 @@ TTF_Font* gFont = NULL;
 SDL_Rect gTileClips[TOTAL_TILE_SPRITES];
 
 
+void getModes()
+{
+	int display = 0;
+	int i;
+	int displayCount;
+	SDL_DisplayMode* mode;
+	Uint32 f;
+
+	int www;
+
+	SDL_Log("GetNumVideoDisplays(): %i",SDL_GetNumVideoDisplays());
+
+	displayCount = SDL_GetNumDisplayModes(display);
+	if(displayCount < 1)
+	{
+		printf("Getting number of display modes failed %s\n",SDL_GetError());
+	}
+	else
+	{
+		for (i = 0; i < displayCount; ++i)
+		{
+			if(SDL_GetDisplayMode(display,i,mode) != 0)
+			{
+				printf("Couldnt get display mode number %d: %s\n",i,SDL_GetError());
+			}
+			f = mode->format;
+
+			//www = mode->w;
+
+			//SDL_Log("Mode %i\tbpp%i\t%s\t%i x %i",i,SDL_BITSPERPIXEL(f),SDL_GetPixelFormatName(f),mode->w,mode->h);
+
+			printf("\nModes Get!\n");
+		}
+	}
+
+}
+
+
+
 int main( int argc, char* args[] )
 {
 	//Start up SDL and create window
@@ -25,6 +64,8 @@ int main( int argc, char* args[] )
 	{
 		#ifdef DEBUG
 		printf("Initialized\n");
+
+		getModes();
 		#endif
 
 		//The level tiles
@@ -175,8 +216,8 @@ bool init()
 
 				//Initialize renderer color
 				SDL_SetRenderDrawColor( gRenderer, 0xAA, 0xAA, 0xAA, 0xAA );
-
-				//get_Scalar();
+//get scalar
+//				get_Scalar();
 
 				//Initialize PNG loading
 				int imgFlags = IMG_INIT_PNG;
