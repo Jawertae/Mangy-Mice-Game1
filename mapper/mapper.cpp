@@ -1,21 +1,23 @@
-
-//#include <fstream>
 #include <iostream>
 #include <string>
 #include <sstream>
 #include <stdlib.h>
 #include <unistd.h>
-#include "mapper.h"
 #include "parser.h"
 
 using namespace std;
 
 int getArgs(int,const char**);
 
+int checkFileName(char*);
+
 int CHOICE = 3;
 int FILL = 1;
 string FILLTEXT = "10";
-static const char* OPTSTRING = "ros0f:?";
+char* FILENAME = "test.bin";
+bool OUTPUT = false;
+
+static const char* OPTSTRING = "ros0i:f:?";
 
 int main(int argc, const char *argv[])
 {
@@ -29,21 +31,21 @@ int main(int argc, const char *argv[])
 
 	tFill >> FILL;
 
-	if(CHOICE==1)
+	if(CHOICE==1) // fills a mapfile with random data
 	{
-		randMap(FILL);
+		randMap(FILENAME,FILL);
 	}
-	if(CHOICE==3)
-	{
-		writeMap(FILL);
-	}
-	if(CHOICE==4)
-	{
-		readMap();
-	}
-	if(CHOICE==2)
+	if(CHOICE==2) // fills a mapfile with zeros
 	{
 		//to be implemented later
+	}
+	if(CHOICE==3) // fills a mapfile with user selected data
+	{
+		writeMap(FILENAME,FILL);
+	}
+	if(OUTPUT) // outputs data about a mapfile
+	{
+		readMap(FILENAME);
 	}
 	return 0;
 }
@@ -66,16 +68,20 @@ int getArgs(int argc, const char **argv)
 				CHOICE = 3;
 				break;
 			case 'o':
-				CHOICE = 4;
+				OUTPUT = true;
+				break;
+			case 'i':
+				checkFileName(optarg);
 				break;
 			case 'f':
 				FILLTEXT = optarg;
 				break;
 			case '?':
-				if (optopt == 'f')
+				if (optopt == 'f'||optopt == 'i')
 				{
-					//fprint("option -%c requires an argument.\n",optopt)
+					cout << "option " << optopt << " requires an argument.\n";
 				}
+				cout << "i for filename, f for fill, r or random, o or output\n";
 				break;
 			default:
 				break; //abort();
@@ -83,4 +89,19 @@ int getArgs(int argc, const char **argv)
 		opt = getopt(argc,(char **)argv,OPTSTRING);
 	}
 return 1;
+}
+
+
+int checkFileName(char* option)
+{
+	if( string(option).find(".bin") != string::npos)
+	{
+		FILENAME = option;
+	}
+	else
+	{
+		cout << "filenames must be .bin\n";
+		return 0;
+	}
+	return 1;
 }

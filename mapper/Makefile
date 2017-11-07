@@ -50,6 +50,6 @@ scratch : cleanall
 clean :
 	rm -v -f *.o
 cleanall :
-	rm -v -f *.o $(OBJ_NAME)*
+	rm -v -f *.o $(OBJ_NAME)* *.bin
 debug : $(OBJS:.cpp=_d.o)
 	$(CC) $(OBJS:.cpp=_d.o) $(LINKER_FLAGS) -o $(OBJ_NAME)_debug

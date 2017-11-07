@@ -10,7 +10,7 @@
 
 using namespace std;
 
-int readMap()
+int readMap(char* filename)
 {
 	int tile;
 	int data;
@@ -22,7 +22,7 @@ int readMap()
 	bool mirror;
 	int rotation;
 
-	fstream binary("test.bin",ios::binary | ios::in);
+	fstream binary(filename,ios::binary | ios::in);
 
 	if(binary.is_open())
 	{
@@ -51,7 +51,7 @@ int readMap()
 			cout << flags << "\n";
 			#endif
 			cout << setfill('0');
-			cout << "[" << z << "." << setw(2) << physics << "." << mirror << "." << rotation << "]";
+			cout << "[" << z << "." << setw(2) << physics << "." << mirror << "." << rotation << "] ";
 			}
 			cout << "\n";
 		}
@@ -60,7 +60,7 @@ int readMap()
 
 	else
 	{
-		cout << "Couldn't open file";
+		cout << "Couldn't open file for reading.";
 		return 0;
 	}
 	cout << "\n";
@@ -68,18 +68,7 @@ int readMap()
 
 }
 
-string toBinary(int n)
-{
-	string r;
-	while(n!=0)
-	{
-		r=(n%2==0 ? "0" : "1" )+r;
-		n/=2;
-	}
-	return r;
-}
-
-int writeMap(int fill)
+int writeMap(char* filename, int fill)
 {
 	int data = 0;
 
@@ -92,7 +81,7 @@ int writeMap(int fill)
 	bool mirror = false;
 
 
-	ofstream mapfile( "test.bin" , ios::binary | ios::in | ios::out);
+	ofstream mapfile( filename , ios::binary | ios::out | ios::trunc);
 	while( tile > 256||tile < 1)
 	{
 		cout << "Tile Between 1 and 256: ";
@@ -154,14 +143,14 @@ int writeMap(int fill)
 	return 0;
 }
 
-int randMap(int fill)
+int randMap(char* filename, int fill)
 {
 	int tile;
 	int data;
 
 	srand(time(NULL));
 
-	ofstream mapfile("test.bin",ios::binary | ios::out);
+	ofstream mapfile(filename,ios::binary | ios::out | ios::trunc);
 
 	for(int i = 0 ; i < fill ; i++)
 	{
@@ -171,4 +160,6 @@ int randMap(int fill)
 		mapfile.write( (char*)&tile, 1 );
 		mapfile.write( (char*)&data, 1 );
 	}
+	mapfile.close();
+	return 0;
 }

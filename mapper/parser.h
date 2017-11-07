@@ -1,10 +1,8 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-int readMap();
-std::string toBinary(int);
-int writeMap(int);
-int randMap(int);
-
+int readMap(char*);
+int writeMap(char*,int);
+int randMap(char*,int);
 
 #endif
