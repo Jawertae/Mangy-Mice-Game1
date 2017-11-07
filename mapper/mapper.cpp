@@ -1,77 +1,86 @@
-#include <fstream>
+
+//#include <fstream>
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <stdlib.h>
+#include <unistd.h>
+#include "mapper.h"
+#include "parser.h"
 
 using namespace std;
 
-int main()
+int getArgs(int,const char**);
+
+int CHOICE = 3;
+int FILL = 1;
+string FILLTEXT = "10";
+static const char* OPTSTRING = "ros0f:?";
+
+int main(int argc, const char *argv[])
 {
-	int data = -1;
 
-	int tile = -1;
-	string fg;
-	bool z = false;
-	int physics = -1;
-	int rot = -1;
-	string flip;
-	bool mirror = false;
-
-
-	ofstream mapfile( "test.bin" , ios::binary | ios::in | ios::out);
-	while( tile > 256||tile < 1)
+	if(argc>1)
 	{
-		cout << "Tile Between 1 and 256: ";
-		cin >> tile;
+		getArgs(argc,argv);
 	}
 
-	cout << "Foreground? (y or n): ";
-	cin >> fg;
+	stringstream tFill(FILLTEXT);
 
-	while( physics > 15 || physics < 0)
+	tFill >> FILL;
+
+	if(CHOICE==1)
 	{
-		cout << "Physics Type between 1 and 15 (0 for nonsolid): ";
-		cin >> physics;
+		randMap(FILL);
 	}
-
-	while ( rot > 4 || rot < 1)
+	if(CHOICE==3)
 	{
-		cout << "Rotation between 1 and 4 (N,E,S,W): ";
-		cin >> rot;
+		writeMap(FILL);
 	}
-	cout << "Mirrored? (y or n): ";
-	cin >> flip;
-
-	if(fg=="y" || fg=="Y" || fg=="1"){z=true;}
-	if(flip=="y" || flip=="Y" || flip=="1"){mirror=true;}
-
-	#ifdef DEBUG
-	cout << "\n~~~~~~~~~~~~~~~~~~~~~~~~";
-	cout << "\nTile:        " << tile;
-	cout << "\nForeground:  " << ((z)?"128":"0");
-	cout << "\nPhysics:     " << physics*8;
-	cout << "\nMirrored:    " << ((mirror)?"4":"0");
-	cout << "\nRotation:    " << rot-1;
-	cout << "\n~~~~~~~~~~~~~~~~~~~~~~~~\n";
-	#endif
-
-	//bit-wise arithmetic
-
-	if(z==true){data = 128;}
-	data += physics * 8;
-	if(mirror==true){data += 4;}
-	data += rot - 1;
-
-
-	#ifdef Debug
-	cout << "\nTile Bytes:" << tile;
-	cout << "\nFlag Bytes:" << data << "\n";
-	#endif
-
-	//actual file write
-
-	mapfile.write((char*) &tile, 1);
-	mapfile.write((char*) &data, 1);
-
-
+	if(CHOICE==4)
+	{
+		readMap();
+	}
+	if(CHOICE==2)
+	{
+		//to be implemented later
+	}
 	return 0;
+}
+
+int getArgs(int argc, const char **argv)
+{
+	int opt = getopt(argc,(char **)argv,OPTSTRING);
+
+	while (opt != -1)
+	{
+		switch (opt)
+		{
+			case 'r':
+				CHOICE = 1;
+				break;
+			case '0':
+				CHOICE = 2;
+				break;
+			case 's':
+				CHOICE = 3;
+				break;
+			case 'o':
+				CHOICE = 4;
+				break;
+			case 'f':
+				FILLTEXT = optarg;
+				break;
+			case '?':
+				if (optopt == 'f')
+				{
+					//fprint("option -%c requires an argument.\n",optopt)
+				}
+				break;
+			default:
+				break; //abort();
+		}
+		opt = getopt(argc,(char **)argv,OPTSTRING);
+	}
+return 1;
 }

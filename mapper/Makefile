@@ -1,6 +1,6 @@
 #OBJS specifies which files to compile as part of the project
 MAIN = mapper.cpp
-OTHERS = 
+OTHERS = parser.cpp
 OBJS = $(MAIN) $(OTHERS)
 #COBJS is a list of compiled, unlinked object files
 COBJS = $(OBJS:.cpp=.o)
@@ -33,11 +33,11 @@ win : $(OBJS)
 	$(WCC) $(OBJS) $(WIN_FLAGS) $(LINKER_FLAGS) -o $(WIN_NAME)
 $(MAIN:.cpp=.o) : %.o : $(MAIN) $(OTHERS:.cpp=.h)
 	$(CC) $< $(COMPILER_FLAGS) -c -o $@ 
-$(OTHERS:.cpp=.o) : %.o : %.cpp %.h globals.h
+$(OTHERS:.cpp=.o) : %.o : %.cpp %.h
 	$(CC) $< $(COMPILER_FLAGS) -c -o $@
 $(MAIN:.cpp=_d.o) : %_d.o : $(MAIN) $(OTHERS:.cpp=.h)
 	$(CC) $< $(DEBUG_FLAGS) -c -o $@ 
-$(OTHERS:.cpp=_d.o) : %_d.o : %.cpp %.h globals.h
+$(OTHERS:.cpp=_d.o) : %_d.o : %.cpp %.h
 	$(CC) $< $(DEBUG_FLAGS) -c -o $@ 
 
 
