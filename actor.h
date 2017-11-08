@@ -13,11 +13,11 @@ class Actor
 {
     public:
 		//The dimensions of the dot
-		static const int DOT_WIDTH = 20;
-		static const int DOT_HEIGHT = 20;
+		static const int DOT_WIDTH = 16;
+		static const int DOT_HEIGHT = 16;
 
 		//Maximum axis velocity of the dot
-		static const int DOT_VEL = 20;
+		static const int DOT_VEL = 8;
 
 		//Initializes the variables
 		Actor( SDL_Renderer* lRenderer );
@@ -43,7 +43,7 @@ class Actor
 
 		LTexture texture;
 		bool jumpLock;
-		static const int jumpVel = 10;
+		static const int jumpVel = 8;
 
 		//Collision box of the dot
 		SDL_Rect mBox;

@@ -3,8 +3,8 @@
 
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 512;//480;
-const int SCREEN_HEIGHT = 512;//272;
+const int SCREEN_WIDTH = 320;
+const int SCREEN_HEIGHT = 240;
 //const int SCREEN_FPS = 60;
 //const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 
