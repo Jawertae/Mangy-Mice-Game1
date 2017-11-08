@@ -3,8 +3,8 @@
 
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 480;
-const int SCREEN_HEIGHT = 272;
+const int SCREEN_WIDTH = 512;//480;
+const int SCREEN_HEIGHT = 512;//272;
 //const int SCREEN_FPS = 60;
 //const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 
@@ -12,16 +12,17 @@ const int SCREEN_HEIGHT = 272;
 //int SCREEN_HEIGHT_TRUE;
 
 //The dimensions of the level
-const int LEVEL_WIDTH = 1280;
-const int LEVEL_HEIGHT = 960;
+const int LEVEL_WIDTH = 512;
+const int LEVEL_HEIGHT = 512;
 
 //Tile constants
 const int TILE_WIDTH = 32;
 const int TILE_HEIGHT = 32;
-const int TOTAL_TILES = 192;
-const int TOTAL_TILE_SPRITES = 12;
+const int TOTAL_TILES = 256;
+const int TOTAL_TILE_SPRITES = 16;
 
 //The different tile sprites
+
 const int TILE_RED = 0;
 const int TILE_GREEN = 1;
 const int TILE_BLUE = 2;

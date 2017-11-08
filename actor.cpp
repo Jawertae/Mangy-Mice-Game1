@@ -45,8 +45,8 @@ void Actor::handleEvent( SDL_Event& e )
         //Adjust the velocity
         switch( e.key.keysym.sym )
         {
-//            case SDLK_UP: mVelY -= DOT_VEL; break;
-//            case SDLK_DOWN: mVelY += DOT_VEL; break;
+            case SDLK_UP: mVelY -= DOT_VEL; break;
+            case SDLK_DOWN: mVelY += DOT_VEL; break;
             case SDLK_LEFT: mVelX -= DOT_VEL; break;
             case SDLK_RIGHT: mVelX += DOT_VEL; break;
 	    case SDLK_SPACE: if(!jumpLock) { jump(); }; break;
@@ -62,8 +62,8 @@ void Actor::handleEvent( SDL_Event& e )
         //Adjust the velocity
         switch( e.key.keysym.sym )
         {
-//            case SDLK_UP: mVelY += DOT_VEL; break;
-//            case SDLK_DOWN: mVelY -= DOT_VEL; break;
+            case SDLK_UP: mVelY += DOT_VEL; break;
+            case SDLK_DOWN: mVelY -= DOT_VEL; break;
             case SDLK_LEFT: mVelX += DOT_VEL; break;
             case SDLK_RIGHT: mVelX -= DOT_VEL; break;
 	    case SDLK_SPACE: if(!jumpLock){mVelY = 0;} jumpLock = 1 ; break;
@@ -117,20 +117,20 @@ void Actor::move( Tile *tiles[] )
     if( ( mBox.x < 0 ) || ( mBox.x + DOT_WIDTH > LEVEL_WIDTH ) || touchesWall( mBox, tiles ) )
     {
         //move back
-        mBox.x -= mVelX;
+   //     mBox.x -= mVelX;
     }
 
     //Move the dot up or down
     mBox.y += mVelY;
 
     //factor in gravity
-    gravity();
+//    gravity();
 
     //If the dot went too far up or down or touched a wall
     if( ( mBox.y < 0 ) || ( mBox.y + DOT_HEIGHT > LEVEL_HEIGHT ) || touchesWall( mBox, tiles ) )
     {
         //move back
-        mBox.y -= mVelY;
+ //       mBox.y -= mVelY;
 	jumpLock = 0;
     }
 

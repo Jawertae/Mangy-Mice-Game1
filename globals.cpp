@@ -78,7 +78,7 @@ bool loadMedia( Tile* tiles[] , SDL_Renderer* lRenderer)
 	bool success = true;
 
 	//Load tile texture
-	if( !gTileTexture.loadFromFile( "assets/tiles.png",lRenderer ) )
+	if( !gTileTexture.loadFromFile( "assets/test_tiles.png",lRenderer ) )
 	{
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
@@ -243,7 +243,7 @@ bool setTiles( Tile* tiles[] )
     int x = 0, y = 0;
 
     //Open the map
-    std::ifstream map( "assets/lazy.map" );
+    std::ifstream map( "assets/test.map" );
 
     //If the map couldn't be loaded
     if( map == NULL )
@@ -307,7 +307,21 @@ bool setTiles( Tile* tiles[] )
 		//Clip the sprite sheet
 		if( tilesLoaded )
 		{
-			gTileClips[ TILE_RED ].x = 0;
+			const int w = 4;
+			const int h = 4;
+			int j = 0;
+			int k = 0;
+			for(int i = 0;i< w*h; i++)
+			{
+				gTileClips[i].x = j * 32;
+				gTileClips[i].y = k * 32;
+				gTileClips[i].w = TILE_WIDTH;
+				gTileClips[i].h = TILE_HEIGHT;
+				j++;
+				if (j >= w){k++;j=0;}
+			}
+
+/*			gTileClips[ TILE_RED ].x = 0;
 			gTileClips[ TILE_RED ].y = 0;
 			gTileClips[ TILE_RED ].w = TILE_WIDTH;
 			gTileClips[ TILE_RED ].h = TILE_HEIGHT;
@@ -366,7 +380,7 @@ bool setTiles( Tile* tiles[] )
 			gTileClips[ TILE_BOTTOMRIGHT ].y = 160;
 			gTileClips[ TILE_BOTTOMRIGHT ].w = TILE_WIDTH;
 			gTileClips[ TILE_BOTTOMRIGHT ].h = TILE_HEIGHT;
-		}
+*/		}
 	}
 
     //Close the file
