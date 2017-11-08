@@ -16,8 +16,8 @@ const int LEVEL_WIDTH = 1280;
 const int LEVEL_HEIGHT = 960;
 
 //Tile constants
-const int TILE_WIDTH = 80;
-const int TILE_HEIGHT = 80;
+const int TILE_WIDTH = 32;
+const int TILE_HEIGHT = 32;
 const int TOTAL_TILES = 192;
 const int TOTAL_TILE_SPRITES = 12;
 

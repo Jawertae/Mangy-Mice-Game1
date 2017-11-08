@@ -15,6 +15,9 @@ int readMap(char* filename)
 	int tile;
 	int data;
 
+	int w;
+	int h;
+
 	string flags;
 
 	bool z;
@@ -26,6 +29,12 @@ int readMap(char* filename)
 
 	if(binary.is_open())
 	{
+		w = binary.get();
+		h = binary.get();
+
+		cout << "Width of Level: " << w;
+		cout << "\nHeight of Level: " << h << "\n";
+
 		while(!binary.eof())
 		{
 
@@ -68,7 +77,7 @@ int readMap(char* filename)
 
 }
 
-int writeMap(char* filename, int fill)
+int writeMap(char* filename, int width, int height)
 {
 	int data = 0;
 
@@ -133,7 +142,10 @@ int writeMap(char* filename, int fill)
 
 	//actual file write
 
-	for(int i = 0; i < fill; i++)
+	mapfile.write((char*) &width,1);
+	mapfile.write((char*) &height,1);
+
+	for(int i = 0; i < (width * height); i++)
 	{
 	mapfile.write((char*) &tile, 1);
 	mapfile.write((char*) &data, 1);
@@ -143,7 +155,7 @@ int writeMap(char* filename, int fill)
 	return 0;
 }
 
-int randMap(char* filename, int fill)
+int randMap(char* filename, int width,int height)
 {
 	int tile;
 	int data;
@@ -152,7 +164,10 @@ int randMap(char* filename, int fill)
 
 	ofstream mapfile(filename,ios::binary | ios::out | ios::trunc);
 
-	for(int i = 0 ; i < fill ; i++)
+	mapfile.write( (char*) &width,1);
+	mapfile.write( (char*) &height,1);
+
+	for(int i = 0 ; i < (width*height) ; i++)
 	{
 		tile = rand() % 256;
 		data = rand() % 256;

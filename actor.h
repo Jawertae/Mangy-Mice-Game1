@@ -9,7 +9,7 @@ extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
 
 
-class Dot
+class Actor
 {
     public:
 		//The dimensions of the dot
@@ -20,8 +20,8 @@ class Dot
 		static const int DOT_VEL = 20;
 
 		//Initializes the variables
-		Dot( SDL_Renderer* lRenderer );
-		~Dot();
+		Actor( SDL_Renderer* lRenderer );
+		~Actor();
 
 		//Takes key presses and adjusts the dot's velocity
 		void handleEvent( SDL_Event& e );

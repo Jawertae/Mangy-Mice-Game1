@@ -3,7 +3,7 @@
 #include "globals.h"
 #include "actor.h"
 
-Dot::Dot(SDL_Renderer* lRenderer)
+Actor::Actor(SDL_Renderer* lRenderer)
 {
     //Initialize the collision box
     mBox.x = 0;
@@ -20,24 +20,24 @@ Dot::Dot(SDL_Renderer* lRenderer)
 	loadMedia("assets/dot.bmp",lRenderer);
 }
 
-Dot::~Dot()
+Actor::~Actor()
 {
 	texture.free();
 }
 
-bool Dot::loadMedia( std::string path , SDL_Renderer* lRenderer)
+bool Actor::loadMedia( std::string path , SDL_Renderer* lRenderer)
 {
 	bool success;
-	//Load dot texture
+	//Load Actor texture
 	if( !texture.loadFromFile( path , lRenderer ) )
 	{
-		printf( "Failed to load dot texture!\n" );
+		printf( "Failed to load Actor texture!\n" );
 		success = false;
 	}
 	return success;
 }
 
-void Dot::handleEvent( SDL_Event& e )
+void Actor::handleEvent( SDL_Event& e )
 {
     //If a key was pressed
 	if( e.type == SDL_KEYDOWN && e.key.repeat == 0 )
@@ -71,19 +71,19 @@ void Dot::handleEvent( SDL_Event& e )
     }
 }
 
-void Dot::jump()
+void Actor::jump()
 {
     //Jump
     mVelY -= jumpVel;
     //jumpLock = 1;
 }
 
-bool Dot::canJump()
+bool Actor::canJump()
 {
 	return !jumpLock;
 }
 
-void Dot::gravity()
+void Actor::gravity()
 {
     //is he in the air?
     if( ( mBox.y + DOT_HEIGHT < LEVEL_HEIGHT ) )// && ( !touchesFloor( mBox, tiles) ) )
@@ -108,7 +108,7 @@ void Dot::gravity()
     }
 }
 
-void Dot::move( Tile *tiles[] )
+void Actor::move( Tile *tiles[] )
 {
     //Move the dot left or right
     mBox.x += mVelX;
@@ -136,7 +136,7 @@ void Dot::move( Tile *tiles[] )
 
 }
 
-void Dot::setCamera( SDL_Rect& camera )
+void Actor::setCamera( SDL_Rect& camera )
 {
 	//Center the camera over the dot
 	camera.x = ( mBox.x + DOT_WIDTH / 2 ) - SCREEN_WIDTH / 2;
@@ -161,7 +161,7 @@ void Dot::setCamera( SDL_Rect& camera )
 	}
 }
 
-void Dot::render( SDL_Rect& camera )
+void Actor::render( SDL_Rect& camera )
 {
     //Show the dot
 	texture.render( mBox.x - camera.x, mBox.y - camera.y );

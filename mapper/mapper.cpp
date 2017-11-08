@@ -11,13 +11,17 @@ int getArgs(int,const char**);
 
 int checkFileName(char*);
 
-int CHOICE = 3;
+int CHOICE = 0;
 int FILL = 1;
 string FILLTEXT = "10";
 char* FILENAME = "test.bin";
 bool OUTPUT = false;
+string W_TEXT = "5";
+string H_TEXT = "5";
+int WIDTH = 5;
+int HEIGHT = 5;
 
-static const char* OPTSTRING = "ros0i:f:?";
+static const char* OPTSTRING = "ros0i:l:w:h:?";
 
 int main(int argc, const char *argv[])
 {
@@ -27,13 +31,17 @@ int main(int argc, const char *argv[])
 		getArgs(argc,argv);
 	}
 
-	stringstream tFill(FILLTEXT);
+	//stringstream tFill(FILLTEXT);
+	stringstream tWidth(W_TEXT);
+	stringstream tHeight(H_TEXT);
 
-	tFill >> FILL;
+	//tFill >> FILL;
+	tWidth >> WIDTH;
+	tHeight >> HEIGHT;
 
 	if(CHOICE==1) // fills a mapfile with random data
 	{
-		randMap(FILENAME,FILL);
+		randMap(FILENAME,WIDTH,HEIGHT);
 	}
 	if(CHOICE==2) // fills a mapfile with zeros
 	{
@@ -41,7 +49,7 @@ int main(int argc, const char *argv[])
 	}
 	if(CHOICE==3) // fills a mapfile with user selected data
 	{
-		writeMap(FILENAME,FILL);
+		writeMap(FILENAME,WIDTH,HEIGHT);
 	}
 	if(OUTPUT) // outputs data about a mapfile
 	{
@@ -72,6 +80,13 @@ int getArgs(int argc, const char **argv)
 				break;
 			case 'i':
 				checkFileName(optarg);
+				break;
+			case 'l':
+			case 'w':
+				W_TEXT = optarg;
+				break;
+			case 'h':
+				H_TEXT = optarg;
 				break;
 			case 'f':
 				FILLTEXT = optarg;

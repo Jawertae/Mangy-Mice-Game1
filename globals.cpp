@@ -4,7 +4,7 @@
 #include <string>
 //#include <iostream.h>
 #include "globals.h"
-
+#include "mapper/parser.h"
 
 
 int SCREEN_WIDTH_TRUE = 480;
