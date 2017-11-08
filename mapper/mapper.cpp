@@ -15,13 +15,13 @@ int CHOICE = 0;
 int FILL = 1;
 string FILLTEXT = "10";
 char* FILENAME = "test.bin";
-bool OUTPUT = false;
+int OUTPUT = 0;
 string W_TEXT = "5";
 string H_TEXT = "5";
 int WIDTH = 5;
 int HEIGHT = 5;
 
-static const char* OPTSTRING = "ros0i:l:w:h:?";
+static const char* OPTSTRING = "rs0opi:l:w:h:?";
 
 int main(int argc, const char *argv[])
 {
@@ -31,14 +31,13 @@ int main(int argc, const char *argv[])
 		getArgs(argc,argv);
 	}
 
-	//stringstream tFill(FILLTEXT);
 	stringstream tWidth(W_TEXT);
 	stringstream tHeight(H_TEXT);
 
-	//tFill >> FILL;
 	tWidth >> WIDTH;
 	tHeight >> HEIGHT;
 
+//input/generator types
 	if(CHOICE==1) // fills a mapfile with random data
 	{
 		randMap(FILENAME,WIDTH,HEIGHT);
@@ -51,9 +50,14 @@ int main(int argc, const char *argv[])
 	{
 		writeMap(FILENAME,WIDTH,HEIGHT);
 	}
-	if(OUTPUT) // outputs data about a mapfile
+//output types
+	if(OUTPUT==1) // outputs data about a mapfile
 	{
 		readMap(FILENAME);
+	}
+	if(OUTPUT==2) // makes a physics mapfile
+	{
+		physicsMap(FILENAME);
 	}
 	return 0;
 }
@@ -76,7 +80,7 @@ int getArgs(int argc, const char **argv)
 				CHOICE = 3;
 				break;
 			case 'o':
-				OUTPUT = true;
+				OUTPUT = 1;
 				break;
 			case 'i':
 				checkFileName(optarg);
@@ -90,6 +94,10 @@ int getArgs(int argc, const char **argv)
 				break;
 			case 'f':
 				FILLTEXT = optarg;
+				break;
+			case 'p':
+				OUTPUT = 2;
+				//checkFileName(optarg);
 				break;
 			case '?':
 				if (optopt == 'f'||optopt == 'i')

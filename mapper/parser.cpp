@@ -38,29 +38,31 @@ int readMap(char* filename)
 		while(!binary.eof())
 		{
 
-			for(int i = 0;i<5;i++)
-{
-			tile = binary.get();
-			data = binary.get();
+			for(int i = 0;i<w;i++)
+			{
+				tile = binary.get();
+				data = binary.get();
 
-			#ifdef DEBUG
-			cout << "\nTile Dec: " << (int)tile;
-			cout << "\nData Dec: " << (int)data << "\n";
-			#endif
+				if(binary.eof()){break;}
 
-			//cout << toBinary(data) << "\n";
-			flags = bitset<8>(data).to_string();
+				#ifdef DEBUG
+				cout << "\nTile Dec: " << (int)tile;
+				cout << "\nData Dec: " << (int)data << "\n";
+				#endif
 
-			z = (bitset<1> (flags.substr(0,1)).to_ulong()?true:false);
-			physics = bitset<4> (flags.substr(1,4)).to_ulong();
-			mirror = (bitset<1> (flags.substr(5,1)).to_ulong()?true:false);
-			rotation = bitset<2> (flags.substr(6,2)).to_ulong();
+				//cout << toBinary(data) << "\n";
+				flags = bitset<8>(data).to_string();
 
-			#ifdef DEBUG
-			cout << flags << "\n";
-			#endif
-			cout << setfill('0');
-			cout << "[" << z << "." << setw(2) << physics << "." << mirror << "." << rotation << "] ";
+				z = (bitset<1> (flags.substr(0,1)).to_ulong()?true:false);
+				physics = bitset<4> (flags.substr(1,4)).to_ulong();
+				mirror = (bitset<1> (flags.substr(5,1)).to_ulong()?true:false);
+				rotation = bitset<2> (flags.substr(6,2)).to_ulong();
+
+				#ifdef DEBUG
+				cout << flags << "\n";
+				#endif
+				cout << setfill('0');
+				cout << "[" << setw(3) << tile << "." << z << "." << setw(2) << physics << "." << mirror << "." << rotation << "] ";
 			}
 			cout << "\n";
 		}
@@ -178,3 +180,67 @@ int randMap(char* filename, int width,int height)
 	mapfile.close();
 	return 0;
 }
+
+int physicsMap(char* filename)
+{
+	int tile;
+	int data;
+
+	int w;
+	int h;
+
+	string physFilename(filename);
+
+	physFilename.replace(physFilename.find('.'),12,".phys");
+
+	string flags;
+
+	bool z;
+	int physics;
+	bool mirror;
+	int rotation;
+
+	ifstream binary(filename,ios::binary | ios::in);
+	ofstream physicsFile(physFilename,ios::out | ios::trunc);
+
+	if(!physicsFile.is_open())
+	{
+		cout << "Couldn't open file for reading.";
+		return 0;
+	}
+	if(binary.is_open())
+	{
+		w = binary.get();
+		h = binary.get();
+
+		while(!binary.eof())
+		{
+			for(int i = 0;i<w;i++)
+			{
+				tile = binary.get();
+				data = binary.get();
+
+				if(binary.eof()){break;}
+
+				flags = bitset<8>(data).to_string();
+
+				//z = (bitset<1> (flags.substr(0,1)).to_ulong()?true:false);
+				physics = bitset<4> (flags.substr(1,4)).to_ulong();
+				//mirror = (bitset<1> (flags.substr(5,1)).to_ulong()?true:false);
+				//rotation = bitset<2> (flags.substr(6,2)).to_ulong();
+
+				physicsFile << setfill('0') << setw(2) << physics << " ";
+			}
+			physicsFile << "\n";
+		}
+		binary.close();
+		physicsFile.close();
+	}
+
+return 1;
+}
+
+
+
+
+
