@@ -28,7 +28,7 @@ class Actor
 
 		//Moves the dot and check collision against tiles
 		void jump();
-		void gravity();
+		void gravity( Tile *tiles[] );
 		void move( Tile *tiles[] );
 		bool canJump();
 
@@ -43,7 +43,7 @@ class Actor
 
 		LTexture texture;
 		bool jumpLock;
-		static const int jumpVel = 8;
+		static const int jumpVel = 64;
 
 		//Collision box of the dot
 		SDL_Rect mBox;

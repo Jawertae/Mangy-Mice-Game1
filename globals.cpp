@@ -5,7 +5,7 @@
 //#include <iostream.h>
 #include "globals.h"
 #include "mapper/parser.h"
-
+#include "debug.h"
 
 int SCREEN_WIDTH_TRUE = 480;
 int SCREEN_HEIGHT_TRUE = 272;
@@ -85,7 +85,7 @@ bool loadMedia( Tile* tiles[] , SDL_Renderer* lRenderer)
 	}
 
 	#ifdef DEBUG
-	printf("Loaded Tile Texture.\n");
+	logText("Loaded Tile Texture.");
 	#endif
 
 	//Load tile map
@@ -96,7 +96,7 @@ bool loadMedia( Tile* tiles[] , SDL_Renderer* lRenderer)
 	}
 
 	#ifdef DEBUG
-	printf("Rendered all Tiles.\n");
+	logText("Rendered all Tiles.");
 	#endif
 
         //Load TTF
@@ -108,7 +108,7 @@ bool loadMedia( Tile* tiles[] , SDL_Renderer* lRenderer)
         }
 
 	#ifdef DEBUG
-	printf("Loaded Font.\n");
+	logText("Loaded Font.");
 	#endif
 
 	return success;
@@ -254,7 +254,7 @@ bool setTiles( Tile* tiles[] )
 	else
 	{
 		#ifdef DEBUG
-		printf("Loaded Map File.");
+		logText("Loaded Map File.");
 		#endif
 
 		//Initialize the tiles
@@ -320,67 +320,7 @@ bool setTiles( Tile* tiles[] )
 				j++;
 				if (j >= w){k++;j=0;}
 			}
-
-/*			gTileClips[ TILE_RED ].x = 0;
-			gTileClips[ TILE_RED ].y = 0;
-			gTileClips[ TILE_RED ].w = TILE_WIDTH;
-			gTileClips[ TILE_RED ].h = TILE_HEIGHT;
-
-			gTileClips[ TILE_GREEN ].x = 0;
-			gTileClips[ TILE_GREEN ].y = 80;
-			gTileClips[ TILE_GREEN ].w = TILE_WIDTH;
-			gTileClips[ TILE_GREEN ].h = TILE_HEIGHT;
-
-			gTileClips[ TILE_BLUE ].x = 0;
-			gTileClips[ TILE_BLUE ].y = 160;
-			gTileClips[ TILE_BLUE ].w = TILE_WIDTH;
-			gTileClips[ TILE_BLUE ].h = TILE_HEIGHT;
-
-			gTileClips[ TILE_TOPLEFT ].x = 80;
-			gTileClips[ TILE_TOPLEFT ].y = 0;
-			gTileClips[ TILE_TOPLEFT ].w = TILE_WIDTH;
-			gTileClips[ TILE_TOPLEFT ].h = TILE_HEIGHT;
-
-			gTileClips[ TILE_LEFT ].x = 80;
-			gTileClips[ TILE_LEFT ].y = 80;
-			gTileClips[ TILE_LEFT ].w = TILE_WIDTH;
-			gTileClips[ TILE_LEFT ].h = TILE_HEIGHT;
-
-			gTileClips[ TILE_BOTTOMLEFT ].x = 80;
-			gTileClips[ TILE_BOTTOMLEFT ].y = 160;
-			gTileClips[ TILE_BOTTOMLEFT ].w = TILE_WIDTH;
-			gTileClips[ TILE_BOTTOMLEFT ].h = TILE_HEIGHT;
-
-			gTileClips[ TILE_TOP ].x = 160;
-			gTileClips[ TILE_TOP ].y = 0;
-			gTileClips[ TILE_TOP ].w = TILE_WIDTH;
-			gTileClips[ TILE_TOP ].h = TILE_HEIGHT;
-
-			gTileClips[ TILE_CENTER ].x = 160;
-			gTileClips[ TILE_CENTER ].y = 80;
-			gTileClips[ TILE_CENTER ].w = TILE_WIDTH;
-			gTileClips[ TILE_CENTER ].h = TILE_HEIGHT;
-
-			gTileClips[ TILE_BOTTOM ].x = 160;
-			gTileClips[ TILE_BOTTOM ].y = 160;
-			gTileClips[ TILE_BOTTOM ].w = TILE_WIDTH;
-			gTileClips[ TILE_BOTTOM ].h = TILE_HEIGHT;
-
-			gTileClips[ TILE_TOPRIGHT ].x = 240;
-			gTileClips[ TILE_TOPRIGHT ].y = 0;
-			gTileClips[ TILE_TOPRIGHT ].w = TILE_WIDTH;
-			gTileClips[ TILE_TOPRIGHT ].h = TILE_HEIGHT;
-
-			gTileClips[ TILE_RIGHT ].x = 240;
-			gTileClips[ TILE_RIGHT ].y = 80;
-			gTileClips[ TILE_RIGHT ].w = TILE_WIDTH;
-			gTileClips[ TILE_RIGHT ].h = TILE_HEIGHT;
-
-			gTileClips[ TILE_BOTTOMRIGHT ].x = 240;
-			gTileClips[ TILE_BOTTOMRIGHT ].y = 160;
-			gTileClips[ TILE_BOTTOMRIGHT ].w = TILE_WIDTH;
-			gTileClips[ TILE_BOTTOMRIGHT ].h = TILE_HEIGHT;
-*/		}
+		}
 	}
 
     //Close the file
@@ -396,7 +336,7 @@ bool touchesWall( SDL_Rect box, Tile* tiles[] )
     for( int i = 0; i < TOTAL_TILES; ++i )
     {
         //If the tile is a wall type tile
-        if( ( tiles[ i ]->getType() >= TILE_CENTER ) && ( tiles[ i ]->getType() <= TILE_TOPLEFT ) )
+        if( ( tiles[ i ]->getType() != 11 ) )
         {
             //If the collision box touches the wall tile
             if( checkCollision( box, tiles[ i ]->getBox() ) )
@@ -410,10 +350,68 @@ bool touchesWall( SDL_Rect box, Tile* tiles[] )
     return false;
 }
 
-bool touchesFloor( SDL_Rect box, Tile* tiles[] )
+bool checkFall( SDL_Rect a, SDL_Rect b )
 {
 
+	//a is moving, b is stationary. all calculations are based on middle x of a and entire x plane of b
+
+    //The sides of the rectangles
+    int leftA, leftB;
+    int rightA, rightB;
+    int topA, topB;
+    int bottomA, bottomB;
+
+	//int midATop,midABot;
+
+    //Calculate the sides of rect A
+    //leftA = a.x;
+    //rightA = a.x + a.w;
+    topA = a.y;
+    bottomA = a.y + a.h;
+	int midA =  a.x + (a.h/2);
+
+    //Calculate the sides of rect B
+    leftB = b.x;
+    rightB = b.x + b.w;
+    topB = b.y;
+    //bottomB = b.y + b.h;
+
+    //if middle of a falls between left and right of b and and all of a is higher than b
+    if( bottomA < topB && topA < topB && leftB < midA && midA < rightB )
+    {
+		return false;
+    }
+    return true;
 }
+
+bool touchesFloor( SDL_Rect box, Tile* tiles[] )
+{	
+    //Go through the tiles
+    for( int i = 0; i < TOTAL_TILES; ++i )
+    {
+	//If the tile is a wall type tile
+	if( ( tiles[ i ]->getType() == 1 ) )
+	{
+	    //If the collision box touches the wall tile
+	    if( checkFall( box, tiles[ i ]->getBox() ) && checkCollision( box, tiles[ i ]->getBox() ) )
+	    {
+		return true;
+	    }
+	}
+    }
+
+    //If no wall tiles were touched
+    return false;
+}
+
+/*
+void collide( Actor* act, Tile* tiles[] )
+{
+	//SDL_Rect actorRect = act->mBox;
+	if( act.y+act.h > tiles[i]){;}
+	return 0;
+}
+*/
 
 LTexture::LTexture()
 {

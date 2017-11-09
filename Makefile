@@ -1,6 +1,6 @@
 #OBJS specifies which files to compile as part of the project
 MAIN = main.cpp
-OTHERS = actor.cpp debug.cpp globals.cpp
+OTHERS = actor.cpp debug.cpp globals.cpp timers.cpp
 OBJS = $(MAIN) $(OTHERS)
 #COBJS is a list of compiled, unlinked object files
 COBJS = $(OBJS:.cpp=.o)
@@ -13,7 +13,7 @@ WCC = i686-w64-mingw32-g++
 #COMPILER_FLAGS specifies the additional compilation options we're using
 # -w suppresses all warnings
 # -std=c++11 configures the standard for the compiler to use
-COMPILER_FLAGS = -w -std=c++11
+COMPILER_FLAGS = -w #-std=c++11
 DEBUG_FLAGS = $(COMPILER_FLAGS) -D DEBUG -g
 WIN_FLAGS = $(COMPILER_FLAGS) -mwindows
 
@@ -50,6 +50,6 @@ scratch : cleanall
 clean :
 	rm -v -f *.o
 cleanall :
-	rm -v -f *.o $(OBJ_NAME) $(OBJ_NAME)_debug
+	rm -v -f *.o log.txt (OBJ_NAME) $(OBJ_NAME)_debug
 debug : $(OBJS:.cpp=_d.o)
 	$(CC) $(OBJS:.cpp=_d.o) $(LINKER_FLAGS) -o $(OBJ_NAME)_debug

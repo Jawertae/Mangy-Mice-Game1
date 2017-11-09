@@ -6,8 +6,8 @@
 Actor::Actor(SDL_Renderer* lRenderer)
 {
     //Initialize the collision box
-    mBox.x = 0;
-    mBox.y = 0;
+    mBox.x = 32;
+    mBox.y = 32;
 	mBox.w = DOT_WIDTH;
 	mBox.h = DOT_HEIGHT;
 
@@ -83,28 +83,37 @@ bool Actor::canJump()
 	return !jumpLock;
 }
 
-void Actor::gravity()
+void Actor::gravity( Tile *tiles[] )
 {
+	int grav = 0;
     //is he in the air?
-    if( ( mBox.y + DOT_HEIGHT < LEVEL_HEIGHT ) )// && ( !touchesFloor( mBox, tiles) ) )
+    if( ( mBox.y + DOT_HEIGHT < LEVEL_HEIGHT ) && ( !touchesFloor( mBox, tiles) ) )
     {
-        if ( mVelY < DOT_VEL + 2 ) //check to see if he is terminal velocity yet
+        if ( grav < DOT_VEL + 8 ) //check to see if he is terminal velocity yet
         {
-            ++mVelY; //fall faster or ascend slower
+            ++grav; //fall faster or ascend slower
         }
         else
         {
             //terminal velocity
-            mVelY = DOT_VEL + 2;
+            grav = DOT_VEL + 8;
         }
-    }
+	mVelY = grav; 
+   }
+	else if( !touchesFloor(mBox, tiles) )
+	{
+		mBox.y -= grav;
+		mVelY = 0;
+		grav = 0;
+	}
     else if( mBox.y + DOT_HEIGHT > LEVEL_HEIGHT)
     {
-        mVelY = 0;
+	mVelY = 0;
+        grav = 0;
         mBox.y = LEVEL_HEIGHT - DOT_HEIGHT;
     }
     else {
-        mVelY = 0;
+        grav = 0;
     }
 }
 
@@ -117,20 +126,20 @@ void Actor::move( Tile *tiles[] )
     if( ( mBox.x < 0 ) || ( mBox.x + DOT_WIDTH > LEVEL_WIDTH ) || touchesWall( mBox, tiles ) )
     {
         //move back
-   //     mBox.x -= mVelX;
+        mBox.x -= mVelX;
     }
 
     //Move the dot up or down
     mBox.y += mVelY;
 
     //factor in gravity
-//    gravity();
+    gravity(tiles);
 
     //If the dot went too far up or down or touched a wall
-    if( ( mBox.y < 0 ) || ( mBox.y + DOT_HEIGHT > LEVEL_HEIGHT ) || touchesWall( mBox, tiles ) )
+    if( ( mBox.y < 0 ) || ( mBox.y + DOT_HEIGHT > LEVEL_HEIGHT )/* || touchesWall( mBox,tiles )*/ || touchesFloor( mBox, tiles ) )
     {
         //move back
- //       mBox.y -= mVelY;
+        mBox.y -= mVelY;
 	jumpLock = 0;
     }
 

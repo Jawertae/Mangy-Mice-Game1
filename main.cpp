@@ -1,11 +1,11 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
-#include <stdio.h>
+//#include <stdio.h>
 #include <string>
 #include "globals.h"
 #include "actor.h"
 #include "debug.h"
-
+#include "timers.h"
 
 SDL_Renderer* gRenderer = NULL;
 SDL_Window* gWindow = NULL;
@@ -13,7 +13,7 @@ LTexture gTileTexture;
 TTF_Font* gFont = NULL;
 SDL_Rect gTileClips[TOTAL_TILE_SPRITES];
 
-
+#ifdef DEBUG
 void getModes()
 {
 	int display = 0;
@@ -50,11 +50,12 @@ void getModes()
 	}
 
 }
-
+#endif
 
 
 int main( int argc, char* args[] )
 {
+	createLog();
 	//Start up SDL and create window
 	if( !init() )
 	{
@@ -63,16 +64,16 @@ int main( int argc, char* args[] )
 	else
 	{
 		#ifdef DEBUG
-		printf("Initialized\n");
+		logText("Initialized");
 
-		getModes();
+		//getModes();
 		#endif
 
 		//The level tiles
 		Tile* tileSet[ TOTAL_TILES ];
 
 		#ifdef DEBUG
-		printf("Tileset Created: %d\n",TOTAL_TILES);
+		logText("Tileset Created: ",TOTAL_TILES);
 		#endif
 
 		//Load media
@@ -83,7 +84,7 @@ int main( int argc, char* args[] )
 		else
 		{
 			#ifdef DEBUG
-			printf("Media loaded\n" );
+			logText("Media loaded" );
 			#endif
 
 			//Main loop flag
@@ -103,7 +104,7 @@ int main( int argc, char* args[] )
 			#endif
 
 			#ifdef DEBUG
-			printf("Gameloop Starting\n\n");
+			logText("Gameloop Starting\n\n");
 			#endif
 
 			//While application is running
@@ -131,7 +132,7 @@ int main( int argc, char* args[] )
 				#endif
 
 				//Clear screen
-				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+				SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
 				SDL_RenderClear( gRenderer );
 
 				//Render level
@@ -156,7 +157,7 @@ int main( int argc, char* args[] )
 		//Free resources and close SDL
 		close( tileSet );
 	}
-
+	closeLog();
 	return 0;
 }
 
@@ -164,7 +165,7 @@ int main( int argc, char* args[] )
 bool init()
 {
 	#ifdef DEBUG
-	printf("Initialization Started");
+	logText("Initialization Started");
 	#endif
 
 	//Initialization flag
@@ -179,7 +180,7 @@ bool init()
 	else
 	{
 		#ifdef DEBUG
-		printf("SDL Initialized \n");
+		logText("SDL Initialized");
 		#endif
 
 		//Set texture filtering to linear
@@ -198,11 +199,11 @@ bool init()
 		else
 		{
 			#ifdef DEBUG
-			printf("Window created.\n");
+			logText("Window created.");
 			#endif
 
 			//Create renderer for window
-			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_SOFTWARE || SDL_RENDERER_ACCELERATED || SDL_RENDERER_PRESENTVSYNC);
+			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED || SDL_RENDERER_PRESENTVSYNC);
 			if( gRenderer == NULL )
 			{
 				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -211,13 +212,13 @@ bool init()
 			else
 			{
 				#ifdef DEBUG
-				printf("Renderer created.\n");
+				logText("Renderer created.");
 				#endif
 
+				SDL_RenderSetLogicalSize(gRenderer,SCREEN_WIDTH,SCREEN_HEIGHT);
+
 				//Initialize renderer color
-				SDL_SetRenderDrawColor( gRenderer, 0xAA, 0xAA, 0xAA, 0xAA );
-//get scalar
-//				get_Scalar();
+				SDL_SetRenderDrawColor( gRenderer, 255, 255, 0, 255 );
 
 				//Initialize PNG loading
 				int imgFlags = IMG_INIT_PNG;
@@ -228,7 +229,7 @@ bool init()
 				}
 
 				#ifdef DEBUG
-				printf("SDL_image Initialized\n");
+				logText("SDL_image Initialized.");
 				#endif
 
 				//Initialize Font
@@ -239,14 +240,14 @@ bool init()
                                 }
 
 				#ifdef DEBUG
-				printf("SDL_TTF Initialized\n");
+				logText("SDL_TTF Initialized.");
 				#endif
 
 			}
 		}
 	}
 	#ifdef DEBUG
-	printf("Initialization function complete\n");
+	logText("Initialization function complete.");
 	#endif
 	return success;
 }

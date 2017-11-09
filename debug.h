@@ -18,4 +18,17 @@ class Debug
 		std::string jumpBool;
 		SDL_Renderer* lRenderer;
 };
+
+
+
+void createLog();
+
+void logText(char*);
+
+void logText(char*,char*);
+
+void logText(char*,int);
+
+void closeLog();
+
 #endif

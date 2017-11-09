@@ -3,7 +3,7 @@
 
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 320;
+const int SCREEN_WIDTH = 426;
 const int SCREEN_HEIGHT = 240;
 //const int SCREEN_FPS = 60;
 //const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
@@ -36,8 +36,10 @@ const int TILE_BOTTOMLEFT = 9;
 const int TILE_LEFT = 10;
 const int TILE_TOPLEFT = 11;
 
-extern TTF_Font *gFont;// = NULL;
 
+#ifdef _SDL_TTF_H
+extern TTF_Font *gFont;// = NULL;
+#endif
 
 
 
