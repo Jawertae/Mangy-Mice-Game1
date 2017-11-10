@@ -13,49 +13,14 @@ LTexture gTileTexture;
 TTF_Font* gFont = NULL;
 SDL_Rect gTileClips[TOTAL_TILE_SPRITES];
 
-#ifdef DEBUG
-void getModes()
-{
-	int display = 0;
-	int i;
-	int displayCount;
-	SDL_DisplayMode* mode;
-	Uint32 f;
-
-	int www;
-
-	SDL_Log("GetNumVideoDisplays(): %i",SDL_GetNumVideoDisplays());
-
-	displayCount = SDL_GetNumDisplayModes(display);
-	if(displayCount < 1)
-	{
-		printf("Getting number of display modes failed %s\n",SDL_GetError());
-	}
-	else
-	{
-		for (i = 0; i < displayCount; ++i)
-		{
-			if(SDL_GetDisplayMode(display,i,mode) != 0)
-			{
-				printf("Couldnt get display mode number %d: %s\n",i,SDL_GetError());
-			}
-			f = mode->format;
-
-			//www = mode->w;
-
-			//SDL_Log("Mode %i\tbpp%i\t%s\t%i x %i",i,SDL_BITSPERPIXEL(f),SDL_GetPixelFormatName(f),mode->w,mode->h);
-
-			printf("\nModes Get!\n");
-		}
-	}
-
-}
-#endif
 
 
 int main( int argc, char* args[] )
 {
+	#ifdef DEBUG
 	createLog();
+	#endif
+
 	//Start up SDL and create window
 	if( !init() )
 	{
@@ -96,6 +61,8 @@ int main( int argc, char* args[] )
 			//The dot that will be moving around on the screen
 			Actor dot = Actor(gRenderer);
 
+			LTimer stepTimer;
+
 			//Level camera
 			SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
@@ -123,9 +90,17 @@ int main( int argc, char* args[] )
 					dot.handleEvent( e );
 				}
 
+				float timeStep = stepTimer.getTicks()/1000.f;
+
+				#ifdef DEBUG
+				logText("Time per Step:",stepTimer.getTicks()/1000.f);
+				#endif
+
 				//Move the dot
-				dot.move( tileSet );
+				dot.move( timeStep, tileSet );
 				dot.setCamera( camera );
+
+				stepTimer.start();
 
 				#ifdef DEBUG
 				debug.update(dot.canJump());
@@ -157,7 +132,10 @@ int main( int argc, char* args[] )
 		//Free resources and close SDL
 		close( tileSet );
 	}
+	#ifdef DEBUG
 	closeLog();
+	#endif
+
 	return 0;
 }
 
@@ -203,7 +181,7 @@ bool init()
 			#endif
 
 			//Create renderer for window
-			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED || SDL_RENDERER_PRESENTVSYNC);
+			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED);// || SDL_RENDERER_PRESENTVSYNC);
 			if( gRenderer == NULL )
 			{
 				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );

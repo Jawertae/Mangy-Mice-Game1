@@ -17,7 +17,7 @@ class Actor
 		static const int DOT_HEIGHT = 16;
 
 		//Maximum axis velocity of the dot
-		static const int DOT_VEL = 8;
+		static const int DOT_VEL = 160;
 
 		//Initializes the variables
 		Actor( SDL_Renderer* lRenderer );
@@ -28,8 +28,9 @@ class Actor
 
 		//Moves the dot and check collision against tiles
 		void jump();
-		void gravity( Tile *tiles[] );
-		void move( Tile *tiles[] );
+		void collideTile( Tile* );
+		void gravity(float, Tile *tiles[] );
+		void move(float timeStep, Tile *tiles[] );
 		bool canJump();
 
 
@@ -43,13 +44,15 @@ class Actor
 
 		LTexture texture;
 		bool jumpLock;
-		static const int jumpVel = 64;
+		static const int jumpVel = 320;
 
 		//Collision box of the dot
 		SDL_Rect mBox;
 
 		//The velocity of the dot
-		int mVelX, mVelY;
+		float mPosX, mPosY;
+		float mVelX, mVelY;
+		int grav = 0;
 		bool loadMedia( std::string path, SDL_Renderer* lRenderer );
 };
 #endif

@@ -50,6 +50,6 @@ scratch : cleanall
 clean :
 	rm -v -f *.o
 cleanall :
-	rm -v -f *.o log.txt (OBJ_NAME) $(OBJ_NAME)_debug
+	rm -v -f *.o log.txt $(OBJ_NAME) $(OBJ_NAME)_debug
 debug : $(OBJS:.cpp=_d.o)
 	$(CC) $(OBJS:.cpp=_d.o) $(LINKER_FLAGS) -o $(OBJ_NAME)_debug

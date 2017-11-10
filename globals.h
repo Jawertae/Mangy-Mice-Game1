@@ -22,7 +22,7 @@ const int TOTAL_TILES = 256;
 const int TOTAL_TILE_SPRITES = 16;
 
 //The different tile sprites
-
+/*
 const int TILE_RED = 0;
 const int TILE_GREEN = 1;
 const int TILE_BLUE = 2;
@@ -35,7 +35,7 @@ const int TILE_BOTTOM = 8;
 const int TILE_BOTTOMLEFT = 9;
 const int TILE_LEFT = 10;
 const int TILE_TOPLEFT = 11;
-
+*/
 
 #ifdef _SDL_TTF_H
 extern TTF_Font *gFont;// = NULL;
@@ -47,8 +47,6 @@ extern TTF_Font *gFont;// = NULL;
 bool init();
 
 int getTotalTiles();
-
-int get_Scalar();
 
 //The window we'll be rendering to
 extern SDL_Window* gWindow;// = NULL;
@@ -112,6 +110,8 @@ bool checkCollision( SDL_Rect a, SDL_Rect b );
 //Checks collision box against set of tiles and floor
 bool touchesWall( SDL_Rect box, Tile* tiles[] );
 bool touchesFloor( SDL_Rect box, Tile* tiles[] );
+
+Tile* getCollide(SDL_Rect,Tile**);
 
 //Sets tiles from tile map
 bool setTiles( Tile *tiles[] );

@@ -29,49 +29,6 @@ int getTotalTiles()
 	return TOTAL_TILES;
 }
 
-int get_Scalar()
-{
-	SDL_DisplayMode* info = NULL;
-	float hor_scale = 1.0;
-	float vert_scale = 1.0;
-	int scalar = 1;
-	//int hor = 0;
-	//int vert = 0;
-
-	if( SDL_GetDesktopDisplayMode(0, info) != 0 )
-	{
-		printf("Get Current Display Failed: %s\n", SDL_GetError() );
-		return 1;
-	}
-	else
-	{
-
-		printf("Supposedly got current display\n");
-
-		if( info->w > 0 ) { SCREEN_WIDTH_TRUE = info->w; }
-		else{ return 1; }
-		if( info->h > 0 ) { SCREEN_HEIGHT_TRUE = info->h; }
-		else{ return 1; }
-
-		if(1)
-		{
-			hor_scale = (float)SCREEN_WIDTH_TRUE/(float)SCREEN_WIDTH;
-			vert_scale = (float)SCREEN_HEIGHT_TRUE/(float)SCREEN_HEIGHT;
-
-			scalar = (int)(!(vert_scale<hor_scale)?hor_scale:vert_scale);
-		}
-	}
-
-	//debug
-	printf( "Screen Dimensions: %s",SCREEN_WIDTH_TRUE, SCREEN_HEIGHT_TRUE );
-	printf( "Horizontal: %d\nVertical: %d\nFinal: %d\n",hor_scale,vert_scale, scalar );
-
-	return scalar;
-}
-
-
-
-
 bool loadMedia( Tile* tiles[] , SDL_Renderer* lRenderer)
 {
 	//Loading success flag
@@ -404,14 +361,24 @@ bool touchesFloor( SDL_Rect box, Tile* tiles[] )
     return false;
 }
 
-/*
-void collide( Actor* act, Tile* tiles[] )
+
+Tile* getCollide( SDL_Rect box, Tile* tiles[] )
 {
-	//SDL_Rect actorRect = act->mBox;
-	if( act.y+act.h > tiles[i]){;}
-	return 0;
+    //Go through the tiles
+    for( int i = 0; i < TOTAL_TILES; ++i )
+    {
+        //If the tile is a wall type tile
+        if( ( tiles[ i ]->getType() != 11 ) )
+        {
+            //If the collision box touches the wall tile
+            if( checkCollision( box, tiles[ i ]->getBox() ) )
+            {
+                return tiles[i];
+            }
+        }
+    }
+//return NULL;
 }
-*/
 
 LTexture::LTexture()
 {

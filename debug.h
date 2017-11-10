@@ -14,8 +14,8 @@ class Debug
 
 	private:
 		LTexture debugText;
-		SDL_Color textColor = {3,3,3};
-		std::string jumpBool;
+		SDL_Color textColor = {30,30,120};
+		std::string varText;
 		SDL_Renderer* lRenderer;
 };
 
@@ -29,6 +29,12 @@ void logText(char*,char*);
 
 void logText(char*,int);
 
+void logText(char*,float);
+
 void closeLog();
+
+void getModes();
+
+int get_Scalar();
 
 #endif

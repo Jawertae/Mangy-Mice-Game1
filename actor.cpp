@@ -62,10 +62,10 @@ void Actor::handleEvent( SDL_Event& e )
         //Adjust the velocity
         switch( e.key.keysym.sym )
         {
-            case SDLK_UP: mVelY += DOT_VEL; break;
-            case SDLK_DOWN: mVelY -= DOT_VEL; break;
-            case SDLK_LEFT: mVelX += DOT_VEL; break;
-            case SDLK_RIGHT: mVelX -= DOT_VEL; break;
+            case SDLK_UP: mVelY = 0; break;
+            case SDLK_DOWN: mVelY = 0; break;
+            case SDLK_LEFT: mVelX = 0; break;
+            case SDLK_RIGHT: mVelX = 0; break;
 	    case SDLK_SPACE: if(!jumpLock){mVelY = 0;} jumpLock = 1 ; break;
         }
     }
@@ -74,7 +74,7 @@ void Actor::handleEvent( SDL_Event& e )
 void Actor::jump()
 {
     //Jump
-    mVelY -= jumpVel;
+    mVelY -= jumpVel*10;
     //jumpLock = 1;
 }
 
@@ -83,24 +83,45 @@ bool Actor::canJump()
 	return !jumpLock;
 }
 
-void Actor::gravity( Tile *tiles[] )
+void Actor::collideTile(Tile *tile)
 {
-	int grav = 0;
+	//int thisleftx,thisrx;
+	//int thisupy,thisdowny;
+	int diffX=0;
+	int diffY=0;
+	bool left = false;
+	bool right = false;
+	bool above = false;
+	bool below = false;
+
+
+
+	if (mVelX > 0){ diffX = (mBox.x+mBox.w)-(tile->getBox().x); }
+	if (mVelX < 0){ diffX = (mBox.x)-(tile->getBox().x+tile->getBox().w); }
+	if (mVelX !=0){ mVelX = 0; mBox.x -= diffX; }
+	if (mVelY > 0){ diffY = (mBox.y+mBox.h)-(tile->getBox().y); }
+	if (mVelY < 0){ diffY = (mBox.y)-(tile->getBox().y+tile->getBox().h); }
+	if (mVelY !=0){ mVelY = 0; mBox.y -= diffY; }
+}
+
+void Actor::gravity( float timeStep, Tile *tiles[] )
+{
+	//int grav = 0;
     //is he in the air?
-    if( ( mBox.y + DOT_HEIGHT < LEVEL_HEIGHT ) && ( !touchesFloor( mBox, tiles) ) )
+    if( ( mBox.y + DOT_HEIGHT < LEVEL_HEIGHT ) && ( !touchesWall( mBox, tiles) ) )
     {
-        if ( grav < DOT_VEL + 8 ) //check to see if he is terminal velocity yet
+        if ( grav < DOT_VEL + 80 ) //check to see if he is terminal velocity yet
         {
-            ++grav; //fall faster or ascend slower
+            grav += (int)(320.f*timeStep); //fall faster or ascend slower
         }
         else
         {
             //terminal velocity
-            grav = DOT_VEL + 8;
+            grav = DOT_VEL + 80;
         }
 	mVelY = grav; 
    }
-	else if( !touchesFloor(mBox, tiles) )
+	else if( !touchesWall(mBox, tiles) )
 	{
 		mBox.y -= grav;
 		mVelY = 0;
@@ -113,33 +134,46 @@ void Actor::gravity( Tile *tiles[] )
         mBox.y = LEVEL_HEIGHT - DOT_HEIGHT;
     }
     else {
+	jumpLock = 0;
         grav = 0;
     }
 }
 
-void Actor::move( Tile *tiles[] )
+void Actor::move(float timeStep, Tile *tiles[] )
+
 {
     //Move the dot left or right
-    mBox.x += mVelX;
+    mBox.x += (int)(mVelX * timeStep);
 
-    //If the dot went too far to the left or right or touched a wall
+    mBox.y += (int)(mVelY * timeStep);
+//	collideTile(getCollide(mBox,tiles));  
+    
+
+
+//If the dot went too far to the left or right or touched a wall
     if( ( mBox.x < 0 ) || ( mBox.x + DOT_WIDTH > LEVEL_WIDTH ) || touchesWall( mBox, tiles ) )
     {
         //move back
-        mBox.x -= mVelX;
-    }
+//	mVelX = 0;
+     //   mBox.x -= mVelX;
+	collideTile(getCollide(mBox,tiles));  
+
+	}
 
     //Move the dot up or down
-    mBox.y += mVelY;
+    //mBox.y += (int)(mVelY * timeStep);
 
     //factor in gravity
-    gravity(tiles);
+    gravity(timeStep,tiles);
 
     //If the dot went too far up or down or touched a wall
-    if( ( mBox.y < 0 ) || ( mBox.y + DOT_HEIGHT > LEVEL_HEIGHT )/* || touchesWall( mBox,tiles )*/ || touchesFloor( mBox, tiles ) )
+    if( ( mBox.y < 0 ) || ( mBox.y + DOT_HEIGHT > LEVEL_HEIGHT ) || touchesWall( mBox,tiles ))// || touchesFloor( mBox, tiles ) )
     {
         //move back
-        mBox.y -= mVelY;
+	//collide();
+	collideTile(getCollide(mBox,tiles));  
+	//mVelY = 0;
+        //mBox.y -= mVelY;
 	jumpLock = 0;
     }
 
