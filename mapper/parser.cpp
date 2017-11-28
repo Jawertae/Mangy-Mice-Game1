@@ -6,6 +6,7 @@
 #include <string>
 #include <bitset>
 
+#include <vector>
 #include "parser.h"
 
 using namespace std;
@@ -242,5 +243,73 @@ return 1;
 
 
 
+int tileMapConv(char* filename)
+{
+	vector<int> tile;
+	int data = 0;
 
+	int w = 0;
+	int h = 0;
 
+	string tileFilename(filename);
+
+	tileFilename.replace(tileFilename.find('.'),12,".map");
+
+	string line;
+
+	ifstream tileMap(filename,ios::in);
+	ofstream tileMapFormatted(tileFilename,ios::out | ios::trunc);
+
+	if(!tileMapFormatted.is_open())
+	{
+		cout << "Couldn't open Formatted Tilemap file for writing.\n";
+		return 0;
+	}
+	if(tileMap.is_open())
+	{
+		size_t pos;
+		string tileStr;
+		for(line; getline(tileMap,line);)
+		
+		{
+			w = 0;
+			pos = line.find('[');
+			while (pos != string::npos)
+			{ 
+				tileStr = line.substr( pos + 1, 3 );
+				tile.push_back( stoi(tileStr,nullptr) );
+				//cout << tile[w] << " ";
+				pos = line.find('[',pos + 1 );
+				w+=1;
+			}
+			//cout << "\n";// << line << endl;
+			h+=1;
+		}
+
+/*
+		tileMapFormatted.write((char*) &w,1);
+		tileMapFormatted.write((char*) &h,1);
+		
+		for (int i=0;i<(w*h);i++)
+		{
+			cout << tile[i] << " ";
+			tileMapFormatted.write((char*) &tile[i], 1);
+			tileMapFormatted.write((char*) &data, 1);
+		}*/
+		for(int j = 0;j<h;j++)
+		{
+		for(int i = 0;i<w;i++)
+		{
+			int k = i+j*16;
+			tileMapFormatted << setfill('0') << setw(2) << tile[k] << " ";
+			//cout << k << " ";
+		}
+			tileMapFormatted << "\n";
+		}
+		//cout << "w=" << w << " h=" << h << "\n";
+		tileMap.close();
+		tileMapFormatted.close();
+	}
+
+return 1;
+}

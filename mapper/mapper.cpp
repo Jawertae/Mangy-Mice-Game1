@@ -21,7 +21,7 @@ string H_TEXT = "5";
 int WIDTH = 5;
 int HEIGHT = 5;
 
-static const char* OPTSTRING = "rs0opi:l:w:h:?";
+static const char* OPTSTRING = "rs0opci:l:w:h:?";
 
 int main(int argc, const char *argv[])
 {
@@ -37,27 +37,33 @@ int main(int argc, const char *argv[])
 	tWidth >> WIDTH;
 	tHeight >> HEIGHT;
 
-//input/generator types
-	if(CHOICE==1) // fills a mapfile with random data
+	//input/generator types
+	if(CHOICE==1) // fills a mapfile with random data		(-r)
 	{
 		randMap(FILENAME,WIDTH,HEIGHT);
 	}
-	if(CHOICE==2) // fills a mapfile with zeros
+	if(CHOICE==2) // fills a mapfile with zeros			(-0)
 	{
 		//to be implemented later
 	}
-	if(CHOICE==3) // fills a mapfile with user selected data
+	if(CHOICE==3) // fills a mapfile with user selected data	(-s)
 	{
 		writeMap(FILENAME,WIDTH,HEIGHT);
 	}
-//output types
-	if(OUTPUT==1) // outputs data about a mapfile
+
+
+	//output types
+	if(OUTPUT==1) // outputs data about a mapfile			(-o)
 	{
 		readMap(FILENAME);
 	}
-	if(OUTPUT==2) // makes a physics mapfile
+	if(OUTPUT==2) // makes a physics mapfile			(-p)
 	{
 		physicsMap(FILENAME);
+	}
+	if(OUTPUT==3) // convert tilemap.txt to .map			(-c)
+	{
+		tileMapConv(FILENAME);
 	}
 	return 0;
 }
@@ -82,6 +88,9 @@ int getArgs(int argc, const char **argv)
 			case 'o':
 				OUTPUT = 1;
 				break;
+			case 'c':
+				OUTPUT = 3;
+				break;
 			case 'i':
 				checkFileName(optarg);
 				break;
@@ -104,7 +113,12 @@ int getArgs(int argc, const char **argv)
 				{
 					cout << "option " << optopt << " requires an argument.\n";
 				}
-				cout << "i for filename, f for fill, r or random, o or output\n";
+				cout << "Required Arguments:\n-i (filename) for input filename (must be .bin)\n\n";
+				cout << "Generation Arguments:\n-w (num) to change width (default 10)\n-h (num) to change height (default 10)\n";
+				cout << "-s to fill map with user selected data\n-r to fill map with random data\n\n";
+				cout << "Conversion Arguments:\n-c convert from a raw tILE file (.txt) to temporary .map file\n\n";
+				cout << "Output Arguments:\n-o to output formatted map info to stdout\n-p to output a physics mapfile for selected map\n";
+				cout << "\n-? to view this help\n";
 				break;
 			default:
 				break; //abort();
@@ -117,13 +131,13 @@ return 1;
 
 int checkFileName(char* option)
 {
-	if( string(option).find(".bin") != string::npos)
+	if( string(option).find(".txt") != string::npos || string(option).find(".bin") != string::npos )
 	{
 		FILENAME = option;
 	}
 	else
 	{
-		cout << "filenames must be .bin\n";
+		cout << "filenames must be .bin or .txt\n";
 		return 0;
 	}
 	return 1;

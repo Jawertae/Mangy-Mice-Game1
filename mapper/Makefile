@@ -21,7 +21,7 @@ WIN_FLAGS = $(COMPILER_FLAGS) -mwindows
 LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf
 
 #OBJ_NAME specifies the name of our exectuable
-OBJ_NAME = p_hawthorne_mapper
+OBJ_NAME = ph_mapper
 WIN_NAME = hawthornemap.exe
 
 .PHONY : clean scratch cleanall

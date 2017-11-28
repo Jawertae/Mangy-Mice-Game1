@@ -98,10 +98,13 @@ void Actor::collideTile(Tile *tile)
 
 	if (mVelX > 0){ diffX = (mBox.x+mBox.w)-(tile->getBox().x); }
 	if (mVelX < 0){ diffX = (mBox.x)-(tile->getBox().x+tile->getBox().w); }
-	if (mVelX !=0){ mVelX = 0; mBox.x -= diffX; }
+	//if (mVelX !=0){ mVelX = 0; mBox.x -= diffX; }
 	if (mVelY > 0){ diffY = (mBox.y+mBox.h)-(tile->getBox().y); }
 	if (mVelY < 0){ diffY = (mBox.y)-(tile->getBox().y+tile->getBox().h); }
-	if (mVelY !=0){ mVelY = 0; mBox.y -= diffY; }
+	//if (mVelY !=0){ mVelY = 0; mBox.y -= diffY; }
+
+	if(diffY >= diffX){mBox.y -= diffY;mVelY = 0;}
+	else{mVelX = 0; mBox.x -= diffX;}
 }
 
 void Actor::gravity( float timeStep, Tile *tiles[] )
@@ -110,14 +113,14 @@ void Actor::gravity( float timeStep, Tile *tiles[] )
     //is he in the air?
     if( ( mBox.y + DOT_HEIGHT < LEVEL_HEIGHT ) && ( !touchesWall( mBox, tiles) ) )
     {
-        if ( grav < DOT_VEL + 80 ) //check to see if he is terminal velocity yet
+        if ( grav < DOT_VEL ) //check to see if he is terminal velocity yet
         {
-            grav += (int)(320.f*timeStep); //fall faster or ascend slower
+            grav += (int)(160.f*timeStep); //fall faster or ascend slower
         }
         else
         {
             //terminal velocity
-            grav = DOT_VEL + 80;
+            grav = DOT_VEL ;
         }
 	mVelY = grav; 
    }
