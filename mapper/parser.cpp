@@ -51,7 +51,6 @@ int readMap(char* filename)
 				cout << "\nData Dec: " << (int)data << "\n";
 				#endif
 
-				//cout << toBinary(data) << "\n";
 				flags = bitset<8>(data).to_string();
 
 				z = (bitset<1> (flags.substr(0,1)).to_ulong()?true:false);
@@ -65,6 +64,7 @@ int readMap(char* filename)
 				cout << setfill('0');
 				cout << "[" << setw(3) << tile << "." << z << "." << setw(2) << physics << "." << mirror << "." << rotation << "] ";
 			}
+			if(binary.eof()){break;}
 			cout << "\n";
 		}
 		binary.close();
@@ -72,10 +72,10 @@ int readMap(char* filename)
 
 	else
 	{
-		cout << "Couldn't open file for reading.";
+		cout << "Couldn't open file for reading.\n";
 		return 0;
 	}
-	cout << "\n";
+	//cout << "\n";
 	return 1;
 
 }
@@ -150,8 +150,8 @@ int writeMap(char* filename, int width, int height)
 
 	for(int i = 0; i < (width * height); i++)
 	{
-	mapfile.write((char*) &tile, 1);
-	mapfile.write((char*) &data, 1);
+		mapfile.write((char*) &tile, 1);
+		mapfile.write((char*) &data, 1);
 	}
 	mapfile.close();
 
@@ -192,6 +192,12 @@ int physicsMap(char* filename)
 
 	string physFilename(filename);
 
+	if (physFilename.find('.bin') == string::npos)
+	{
+		cout << "Input filename for -p must be .bin.\nAborting\n";
+		return -1;
+	}
+ 
 	physFilename.replace(physFilename.find('.'),12,".phys");
 
 	string flags;
@@ -206,8 +212,8 @@ int physicsMap(char* filename)
 
 	if(!physicsFile.is_open())
 	{
-		cout << "Couldn't open file for reading.";
-		return 0;
+		cout << "Couldn't open file for reading.\n";
+		return -1;
 	}
 	if(binary.is_open())
 	{
@@ -253,6 +259,12 @@ int tileMapConv(char* filename)
 
 	string tileFilename(filename);
 
+	if (tileFilename.find('.txt') == string::npos)
+	{
+		cout << "Input filename for -c must be .txt.\nAborting\n";
+		return -1;
+	}
+
 	tileFilename.replace(tileFilename.find('.'),12,".map");
 
 	string line;
@@ -282,7 +294,6 @@ int tileMapConv(char* filename)
 				pos = line.find('[',pos + 1 );
 				w+=1;
 			}
-			//cout << "\n";// << line << endl;
 			h+=1;
 		}
 
@@ -295,18 +306,17 @@ int tileMapConv(char* filename)
 			cout << tile[i] << " ";
 			tileMapFormatted.write((char*) &tile[i], 1);
 			tileMapFormatted.write((char*) &data, 1);
-		}*/
+		}
+*/
 		for(int j = 0;j<h;j++)
 		{
-		for(int i = 0;i<w;i++)
-		{
-			int k = i+j*16;
-			tileMapFormatted << setfill('0') << setw(2) << tile[k] << " ";
-			//cout << k << " ";
-		}
+			for(int i = 0;i<w;i++)
+			{
+				int k = i+j*16;
+				tileMapFormatted << setfill('0') << setw(2) << tile[k] << " ";
+			}
 			tileMapFormatted << "\n";
 		}
-		//cout << "w=" << w << " h=" << h << "\n";
 		tileMap.close();
 		tileMapFormatted.close();
 	}
