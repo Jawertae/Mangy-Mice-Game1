@@ -1,3 +1,14 @@
-Mangy-Mice-Game 1
+Project Hawthorne Prototype
 ================
-very rudimentary game engine experiment
+Very rudimentary game engine experiment.
+
+Written in C++ using SDL
+
+Mapping program also included.
+
+
+
+Mapping Program can generate maps to be used with the engine.
+
+Make the mapper and run it using the -? argument for help.
+
